@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,20 +21,21 @@ public class RawMaterialEntity extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
 
-    @Column(unique = true, length = 20)
+    @Column(unique = true, length = 20, nullable = false)
     @NotBlank(message = "Raw material code is required.")
+    @Size(max = 20, message = "Code must be at most 20 characters.")
     public String code;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @NotBlank(message = "Raw material name is required.")
     public String name;
 
-    @Column(name = "stock_quantity")
+    @Column(name = "stock_quantity", nullable = false)
     @NotNull(message = "Stock quantity is required.")
     @Min(value = 0, message = "Stock quantity cannot be negative.")
     public Integer stockQuantity;
 
-    @Column(name = "unit_type")
+    @Column(name = "unit_type", nullable = false)
     @NotNull(message = "Unit type is required.")
     @Enumerated(EnumType.STRING)
     public UnitType unitType;

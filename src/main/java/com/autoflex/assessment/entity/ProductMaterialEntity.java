@@ -30,7 +30,7 @@ public class ProductMaterialEntity extends PanacheEntityBase {
     @JsonIgnore
     public RawMaterialEntity rawMaterial;
 
-    @Column(name = "quantity_needed")
+    @Column(name = "quantity_needed", nullable = false)
     @DecimalMin(value = "0.01", message = "Quantity needed must be at least 0.01")
     public BigDecimal quantityNeeded;
 
