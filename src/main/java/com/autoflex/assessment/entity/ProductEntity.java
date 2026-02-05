@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,7 +40,10 @@ public class ProductEntity extends PanacheEntityBase {
     @Column(name = "created_at", updatable = false)
     public LocalDateTime createdAt;
 
-    @UpdateTimestamp()
+    @UpdateTimestamp
     @Column(name = "updated_at")
     public LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<ProductMaterialEntity> materials;
 }

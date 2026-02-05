@@ -42,7 +42,7 @@ public class RawMaterialEntity extends PanacheEntityBase {
     @Column(name = "created_at", updatable = false)
     public LocalDateTime createdAt;
 
-    @UpdateTimestamp()
+    @UpdateTimestamp
     @Column(name = "updated_at")
     public LocalDateTime updatedAt;
 }
