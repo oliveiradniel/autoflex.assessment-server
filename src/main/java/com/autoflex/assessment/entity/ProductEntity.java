@@ -1,5 +1,6 @@
 package com.autoflex.assessment.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -48,8 +49,13 @@ public class ProductEntity extends PanacheEntityBase {
     @Column(name = "updated_at")
     public LocalDateTime updatedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ProductMaterialEntity> materials;
+
+    public static boolean existsById(UUID id) {
+        return findById(id) != null;
+    }
 
     public static boolean existsByCode(String code) {
         return count("code", code) > 0;
