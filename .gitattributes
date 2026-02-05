@@ -1,0 +1,2 @@
+# Force all text files to be LF in the repository.
+* text=auto eol=lf
