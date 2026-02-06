@@ -25,12 +25,14 @@ public class ProductService {
     }
 
     public List<ProductResponse> list() {
+
         return ProductEntity.listAll().stream()
                 .map(entity -> ProductMapper.toResponse((ProductEntity) entity))
                 .collect(Collectors.toList());
     }
 
     public ProductResponse findById(UUID id) {
+
         ProductEntity entity = (ProductEntity) ProductEntity.findByIdOptional(id)
                 .orElseThrow(ProductNotFoundException::new);
 
@@ -38,6 +40,7 @@ public class ProductService {
     }
 
     public ProductResponse create(ProductCreateRequest product) {
+
         if (ProductEntity.existsByCode(product.code)) {
             throw new CodeAlreadyInUseException();
         }
@@ -54,17 +57,18 @@ public class ProductService {
         createdProduct.description = product.description;
 
         for (ProductCreateRequest.RawMaterialQuantity material : product.materials) {
-            RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterialId);
+            RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.rawMaterialId);
 
             createdProduct.addRawMaterial(rawMaterial, material.quantityNeeded);
         }
 
-        createdProduct.persist();
+        createdProduct.persistAndFlush();
 
         return ProductMapper.toResponse(createdProduct);
     }
 
     public ProductResponse update(UUID id, ProductUpdateRequest product) {
+
         ProductEntity existingProduct = findEntityById(id);
 
         validateBasicFields(product, existingProduct);
@@ -90,7 +94,7 @@ public class ProductService {
             // Go through all the raw materials sent to the association and make upserts
             for (ProductUpdateRequest.RawMaterialQuantity material : product.materials) {
 
-                RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterialId);
+                RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.rawMaterialId);
 
                 existingProduct.upsertRawMaterial(rawMaterial, material.quantityNeeded);
             }
@@ -113,12 +117,14 @@ public class ProductService {
     }
 
     public void delete(UUID id) {
+
         ProductResponse product = findById(id);
 
         ProductEntity.deleteById(id);
     }
 
     private ProductEntity findEntityById(UUID id) {
+
         return (ProductEntity) ProductEntity.findByIdOptional(id)
                 .orElseThrow(ProductNotFoundException::new);
     }

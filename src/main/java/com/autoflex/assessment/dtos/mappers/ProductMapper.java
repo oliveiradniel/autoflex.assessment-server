@@ -24,6 +24,8 @@ public class ProductMapper {
             rawMaterial.rawMaterialId = material.rawMaterial.id;
             rawMaterial.rawMaterialName = material.rawMaterial.name;
             rawMaterial.quantityNeeded = material.quantityNeeded;
+            rawMaterial.createdAt = material.createdAt;
+            rawMaterial.updatedAt = material.updatedAt;
 
             return rawMaterial;
         }).toList();

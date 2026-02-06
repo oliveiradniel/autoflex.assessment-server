@@ -30,5 +30,9 @@ public class ProductResponse {
         public String rawMaterialName;
 
         public BigDecimal quantityNeeded;
+
+        public LocalDateTime createdAt;
+
+        public LocalDateTime updatedAt;
     }
 }

@@ -1,6 +1,8 @@
 package com.autoflex.assessment.resources;
 
-import com.autoflex.assessment.entities.RawMaterialEntity;
+import com.autoflex.assessment.dtos.product.param.ProductIdParam;
+import com.autoflex.assessment.dtos.raw_material.request.RawMaterialCreateRequest;
+import com.autoflex.assessment.dtos.raw_material.request.RawMaterialUpdateRequest;
 import com.autoflex.assessment.services.RawMaterialService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -9,8 +11,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-
-import java.util.UUID;
 
 @Path("/raw-materials")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,15 +30,15 @@ public class RawMaterialResource {
 
     @GET
     @Path("/{id}")
-    public Response findById(@PathParam("id") UUID id) {
-        return Response.ok(rawMaterialService.findById(id)).build();
+    public Response findById(@BeanParam @Valid ProductIdParam param) {
+        return Response.ok(rawMaterialService.findById(param.id)).build();
     }
 
     @Context
     UriInfo uriInfo;
     @POST
     @Transactional
-    public Response create(@Valid RawMaterialEntity rawMaterial) {
+    public Response create(@Valid RawMaterialCreateRequest rawMaterial) {
         var createdRawMaterial = rawMaterialService.create(rawMaterial);
 
         var uri = uriInfo.getAbsolutePathBuilder().path(createdRawMaterial.id.toString()).build();
@@ -49,15 +49,15 @@ public class RawMaterialResource {
     @PATCH
     @Transactional
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, RawMaterialEntity rawMaterial) {
-        return Response.ok(rawMaterialService.update(id, rawMaterial)).build();
+    public Response update(@BeanParam @Valid ProductIdParam param, RawMaterialUpdateRequest rawMaterial) {
+        return Response.ok(rawMaterialService.update(param.id, rawMaterial)).build();
     }
 
     @DELETE
     @Transactional
     @Path("/{id}")
-    public Response delete(@PathParam("id") UUID id) {
-        rawMaterialService.delete(id);
+    public Response delete(@BeanParam @Valid ProductIdParam param) {
+        rawMaterialService.delete(param.id);
 
         return Response.noContent().build();
     }

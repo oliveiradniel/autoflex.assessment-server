@@ -1,5 +1,9 @@
 package com.autoflex.assessment.services;
 
+import com.autoflex.assessment.dtos.mappers.RawMaterialMapper;
+import com.autoflex.assessment.dtos.raw_material.request.RawMaterialCreateRequest;
+import com.autoflex.assessment.dtos.raw_material.request.RawMaterialUpdateRequest;
+import com.autoflex.assessment.dtos.raw_material.response.RawMaterialResponse;
 import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.enums.UnitType;
 import com.autoflex.assessment.exceptions.*;
@@ -7,20 +11,28 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RawMaterialService {
 
-    public List<RawMaterialEntity> list() {
-        return RawMaterialEntity.listAll();
+    public List<RawMaterialResponse> list() {
+
+        return RawMaterialEntity.listAll().stream()
+                .map(entity -> RawMaterialMapper.toResponse((RawMaterialEntity) entity))
+                .collect(Collectors.toList());
     }
 
-    public RawMaterialEntity findById(UUID id) {
-        return (RawMaterialEntity) RawMaterialEntity.findByIdOptional(id)
+    public RawMaterialResponse findById(UUID id) {
+
+        RawMaterialEntity entity = (RawMaterialEntity) RawMaterialEntity.findByIdOptional(id)
                 .orElseThrow(RawMaterialNotFoundException::new);
+
+        return RawMaterialMapper.toResponse(entity);
     }
 
-    public RawMaterialEntity create(RawMaterialEntity rawMaterial) {
+    public RawMaterialResponse create(RawMaterialCreateRequest rawMaterial) {
+
         if (RawMaterialEntity.existsByCode(rawMaterial.code)) {
             throw new CodeAlreadyInUseException();
         }
@@ -29,13 +41,21 @@ public class RawMaterialService {
             throw new NameAlreadyInUseException();
         }
 
-        RawMaterialEntity.persist(rawMaterial);
+        RawMaterialEntity createdRawMaterial = new RawMaterialEntity();
 
-        return rawMaterial;
+        createdRawMaterial.code = rawMaterial.code;
+        createdRawMaterial.name = rawMaterial.name;
+        createdRawMaterial.stockQuantity = rawMaterial.stockQuantity;
+        createdRawMaterial.unitType = rawMaterial.unitType;
+
+        createdRawMaterial.persistAndFlush();
+
+        return RawMaterialMapper.toResponse(createdRawMaterial);
     }
 
-    public RawMaterialEntity update(UUID id, RawMaterialEntity rawMaterial) {
-        RawMaterialEntity entity = findById(id);
+    public RawMaterialResponse update(UUID id, RawMaterialUpdateRequest rawMaterial) {
+
+        RawMaterialEntity entity = findEntityById(id);
 
         if (rawMaterial.code != null && rawMaterial.code.length() > 20) {
             throw new BusinessException("Code must be at most 20 characters.", 422);
@@ -61,7 +81,6 @@ public class RawMaterialService {
             }
         }
 
-
         if (rawMaterial.stockQuantity != null) entity.stockQuantity = rawMaterial.stockQuantity;
         if (rawMaterial.unitType != null) entity.unitType = rawMaterial.unitType;
         if (rawMaterial.code != null) entity.code = rawMaterial.code;
@@ -69,12 +88,19 @@ public class RawMaterialService {
 
         RawMaterialEntity.persist(entity);
 
-        return entity;
+        return RawMaterialMapper.toResponse(entity);
     }
 
     public void delete(UUID id) {
+
         findById(id);
 
         RawMaterialEntity.deleteById(id);
+    }
+
+    public RawMaterialEntity findEntityById(UUID id) {
+
+        return (RawMaterialEntity) RawMaterialEntity.findByIdOptional(id)
+                .orElseThrow(RawMaterialNotFoundException::new);
     }
 }

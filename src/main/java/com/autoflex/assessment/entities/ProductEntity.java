@@ -69,6 +69,7 @@ public class ProductEntity extends PanacheEntityBase {
     }
 
     public List<ProductMaterialEntity> getMaterials() {
+
         return Collections.unmodifiableList(materials);
     }
 
