@@ -1,7 +1,10 @@
 package com.autoflex.assessment.services;
 
+import com.autoflex.assessment.dtos.mappers.ProductMapper;
+import com.autoflex.assessment.dtos.product.request.ProductCreateRequest;
+import com.autoflex.assessment.dtos.product.request.ProductUpdateRequest;
+import com.autoflex.assessment.dtos.product.response.ProductResponse;
 import com.autoflex.assessment.entities.ProductEntity;
-import com.autoflex.assessment.entities.ProductMaterialEntity;
 import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,16 +24,20 @@ public class ProductService {
         this.rawMaterialService = rawMaterialService;
     }
 
-    public List<ProductEntity> list() {
-        return ProductEntity.listAll();
+    public List<ProductResponse> list() {
+        return ProductEntity.listAll().stream()
+                .map(entity -> ProductMapper.toResponse((ProductEntity) entity))
+                .collect(Collectors.toList());
     }
 
-    public ProductEntity findById(UUID id) {
-        return (ProductEntity) ProductEntity.findByIdOptional(id)
+    public ProductResponse findById(UUID id) {
+        ProductEntity entity = (ProductEntity) ProductEntity.findByIdOptional(id)
                 .orElseThrow(ProductNotFoundException::new);
+
+        return ProductMapper.toResponse(entity);
     }
 
-    public ProductEntity create(ProductEntity product) {
+    public ProductResponse create(ProductCreateRequest product) {
         if (ProductEntity.existsByCode(product.code)) {
             throw new CodeAlreadyInUseException();
         }
@@ -46,19 +53,19 @@ public class ProductService {
         createdProduct.price = product.price;
         createdProduct.description = product.description;
 
-        for (ProductMaterialEntity material : product.getMaterials()) {
-            RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterial.id);
+        for (ProductCreateRequest.RawMaterialQuantity material : product.materials) {
+            RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterialId);
 
             createdProduct.addRawMaterial(rawMaterial, material.quantityNeeded);
         }
 
         createdProduct.persist();
 
-        return createdProduct;
+        return ProductMapper.toResponse(createdProduct);
     }
 
-    public ProductEntity update(UUID id, ProductEntity product) {
-        ProductEntity existingProduct = findById(id);
+    public ProductResponse update(UUID id, ProductUpdateRequest product) {
+        ProductEntity existingProduct = findEntityById(id);
 
         validateBasicFields(product, existingProduct);
 
@@ -67,23 +74,23 @@ public class ProductService {
         if (product.description != null) existingProduct.description = product.description;
         if (product.price != null) existingProduct.price = product.price;
 
-        if (product.getMaterials() != null) {
+        if (product.materials != null) {
 
             // Store all the raw material IDs of the shipped product
-            Set<UUID> materialIds = product.getMaterials().stream()
+            Set<UUID> materialIds = product.materials.stream()
                     .map(material -> {
-                        if (material.rawMaterial == null || material.rawMaterial.id == null) {
+                        if (material.rawMaterialId == null) {
                             throw new RawMaterialIdEmptyException();
                         }
 
-                        return material.rawMaterial.id;
+                        return material.rawMaterialId;
                     })
                     .collect(Collectors.toSet());
 
             // Go through all the raw materials sent to the association and make upserts
-            for (ProductMaterialEntity material : product.getMaterials()) {
+            for (ProductUpdateRequest.RawMaterialQuantity material : product.materials) {
 
-                RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterial.id);
+                RawMaterialEntity rawMaterial = rawMaterialService.findById(material.rawMaterialId);
 
                 existingProduct.upsertRawMaterial(rawMaterial, material.quantityNeeded);
             }
@@ -102,27 +109,32 @@ public class ProductService {
 
         existingProduct.persist();
 
-        return existingProduct;
+        return ProductMapper.toResponse(existingProduct);
     }
 
     public void delete(UUID id) {
-        ProductEntity product = findById(id);
+        ProductResponse product = findById(id);
 
         ProductEntity.deleteById(id);
     }
 
-    private void validateBasicFields(ProductEntity product, ProductEntity existing) {
+    private ProductEntity findEntityById(UUID id) {
+        return (ProductEntity) ProductEntity.findByIdOptional(id)
+                .orElseThrow(ProductNotFoundException::new);
+    }
+
+    private void validateBasicFields(ProductUpdateRequest product, ProductEntity existingProduct) {
 
         if (product.code != null && product.code.length() > 20) {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
 
-        if (product.code != null && !product.code.equals(existing.code)
+        if (product.code != null && !product.code.equals(existingProduct.code)
                 && ProductEntity.existsByCode(product.code)) {
             throw new CodeAlreadyInUseException();
         }
 
-        if (product.name != null && !product.name.equals(existing.name)
+        if (product.name != null && !product.name.equals(existingProduct.name)
                 && ProductEntity.existsByName(product.name)) {
             throw new NameAlreadyInUseException();
         }
@@ -136,6 +148,4 @@ public class ProductService {
             throw new BusinessException("Description must be at most 500 characters.", 422);
         }
     }
-
-
 }

@@ -1,6 +1,9 @@
 package com.autoflex.assessment.resources;
 
-import com.autoflex.assessment.entities.ProductEntity;
+import com.autoflex.assessment.dtos.product.param.ProductIdParam;
+import com.autoflex.assessment.dtos.product.request.ProductCreateRequest;
+import com.autoflex.assessment.dtos.product.request.ProductUpdateRequest;
+import com.autoflex.assessment.dtos.product.response.ProductResponse;
 import com.autoflex.assessment.services.ProductService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -9,8 +12,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-
-import java.util.UUID;
+import jakarta.ws.rs.BeanParam;
 
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,16 +32,16 @@ public class ProductResource {
 
     @GET
     @Path("/{id}")
-    public Response findById(@PathParam("id") UUID id) {
-        return Response.ok(productService.findById(id)).build();
+    public Response findById(@BeanParam @Valid ProductIdParam param) {
+        return Response.ok(productService.findById(param.id)).build();
     }
 
     @Context
     UriInfo uriInfo;
     @POST
     @Transactional
-    public Response create(@Valid ProductEntity product) {
-        var createdProduct = productService.create(product);
+    public Response create(@Valid ProductCreateRequest product) {
+        ProductResponse createdProduct = productService.create(product);
 
         var uri = uriInfo.getAbsolutePathBuilder().path(createdProduct.id.toString()).build();
 
@@ -49,15 +51,18 @@ public class ProductResource {
     @PATCH
     @Transactional
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, ProductEntity product) {
-        return Response.ok(productService.update(id, product)).build();
+    public Response update(
+            @BeanParam @Valid ProductIdParam param,
+            ProductUpdateRequest product
+    ) {
+        return Response.ok(productService.update(param.id, product)).build();
     }
 
     @DELETE
     @Transactional
     @Path("/{id}")
-    public Response delete(@PathParam("id") UUID id) {
-        productService.delete(id);
+    public Response delete(@BeanParam @Valid ProductIdParam param) {
+        productService.delete(param.id);
 
         return Response.noContent().build();
     }
