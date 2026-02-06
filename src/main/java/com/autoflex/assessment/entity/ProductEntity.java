@@ -1,5 +1,8 @@
 package com.autoflex.assessment.entity;
 
+import com.autoflex.assessment.exception.BusinessException;
+import com.autoflex.assessment.exception.ProductMaterialNotFoundException;
+import com.autoflex.assessment.exception.RawMaterialIdEmptyException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
@@ -12,12 +15,16 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_products")
 public class ProductEntity extends PanacheEntityBase {
+
+    private static final BigDecimal MIN_QUANTITY = new BigDecimal("0.01");
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,7 +58,7 @@ public class ProductEntity extends PanacheEntityBase {
 
     @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<ProductMaterialEntity> materials;
+    private final List<ProductMaterialEntity> materials = new ArrayList<>();
 
     public static boolean existsByCode(String code) {
         return count("code", code) > 0;
@@ -59,5 +66,81 @@ public class ProductEntity extends PanacheEntityBase {
 
     public static boolean existsByName(String name) {
         return count("name", name) > 0;
+    }
+
+    public List<ProductMaterialEntity> getMaterials() {
+        return Collections.unmodifiableList(materials);
+    }
+
+    public void addRawMaterial(
+            RawMaterialEntity rawMaterial, BigDecimal quantityNeeded
+    ) {
+
+        if (rawMaterial == null || rawMaterial.id == null) {
+            throw new BusinessException("Raw material is required", 422);
+        }
+
+        if (quantityNeeded == null || quantityNeeded.compareTo(MIN_QUANTITY) < 0) {
+            throw new BusinessException("Quantity needed must be at least 0.01", 422);
+        }
+
+        boolean alreadyExists = materials.stream()
+                .anyMatch(productMaterial -> productMaterial.rawMaterial != null
+                        && productMaterial.rawMaterial.id.equals(rawMaterial.id));
+
+        if (alreadyExists) {
+            throw new BusinessException(
+                    "This raw material is already part of the composition of this product.",
+                    422
+            );
+        }
+
+        ProductMaterialEntity productMaterial = new ProductMaterialEntity();
+
+        productMaterial.product = this;
+        productMaterial.rawMaterial = rawMaterial;
+        productMaterial.quantityNeeded = quantityNeeded;
+
+        materials.add(productMaterial);
+    }
+
+    public void upsertRawMaterial(RawMaterialEntity rawMaterial, BigDecimal quantity) {
+
+        if (rawMaterial == null || rawMaterial.id == null) {
+            throw new RawMaterialIdEmptyException();
+        }
+
+        if (quantity == null || quantity.compareTo(MIN_QUANTITY) < 0) {
+            throw new BusinessException("Quantity needed must be at least 0.01", 422);
+        }
+
+        ProductMaterialEntity found = materials.stream()
+                .filter(productMaterial -> productMaterial.rawMaterial != null
+                        && productMaterial.rawMaterial.id.equals(rawMaterial.id))
+                .findFirst()
+                .orElse(null);
+
+        if (found != null) {
+            found.quantityNeeded = quantity;
+            return;
+        }
+
+        addRawMaterial(rawMaterial, quantity);
+    }
+
+    public void removeRawMaterial(UUID rawMaterialId) {
+
+        if (rawMaterialId == null) {
+            throw new RawMaterialIdEmptyException();
+        }
+
+        boolean removed = materials.removeIf(
+                productMaterial -> productMaterial
+                        .rawMaterial.id.equals(rawMaterialId)
+        );
+
+        if (!removed) {
+            throw new ProductMaterialNotFoundException();
+        }
     }
 }
