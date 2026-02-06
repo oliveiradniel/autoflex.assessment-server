@@ -1,6 +1,7 @@
 package com.autoflex.assessment.controller;
 
 import com.autoflex.assessment.entity.RawMaterialEntity;
+import com.autoflex.assessment.service.RawMaterialService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -16,38 +17,48 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 public class RawMaterialController {
 
+    private final RawMaterialService rawMaterialService;
+
+    public RawMaterialController(RawMaterialService rawMaterialService) {
+        this.rawMaterialService = rawMaterialService;
+    }
+
     @GET
     public Response list() {
-        return Response.ok().build();
+        return Response.ok(rawMaterialService.list()).build();
     }
 
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
-        return Response.ok().build();
+        return Response.ok(rawMaterialService.findById(id)).build();
     }
 
     @Context
     UriInfo uriInfo;
     @POST
     @Transactional
-    public Response create(@Valid RawMaterialEntity product) {
-        // var uri = uriInfo.getAbsolutePathBuilder().path(createdRawMaterial.id.toString()).build();
+    public Response create(@Valid RawMaterialEntity rawMaterial) {
+        var createdRawMaterial = rawMaterialService.create(rawMaterial);
 
-        return Response.ok().build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(createdRawMaterial.id.toString()).build();
+
+        return Response.created(uri).entity(createdRawMaterial).build();
     }
 
     @PATCH
     @Transactional
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, RawMaterialEntity product) {
-        return Response.ok().build();
+    public Response update(@PathParam("id") UUID id, RawMaterialEntity rawMaterial) {
+        return Response.ok(rawMaterialService.update(id, rawMaterial)).build();
     }
 
     @DELETE
     @Transactional
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
+        rawMaterialService.delete(id);
+
         return Response.noContent().build();
     }
 }

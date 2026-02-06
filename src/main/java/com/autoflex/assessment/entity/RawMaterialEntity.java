@@ -47,4 +47,12 @@ public class RawMaterialEntity extends PanacheEntityBase {
     @UpdateTimestamp
     @Column(name = "updated_at")
     public LocalDateTime updatedAt;
+
+    public static boolean existsByCode(String code) {
+        return count("code", code) > 0;
+    }
+
+    public static boolean existsByName(String name) {
+        return count("name", name) > 0;
+    }
 }

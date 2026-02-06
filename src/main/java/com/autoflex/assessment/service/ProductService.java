@@ -40,8 +40,6 @@ public class ProductService {
     public ProductEntity update(UUID id, ProductEntity product) {
         ProductEntity entity = findById(id);
 
-        if (entity == null) throw new ProductNotFoundException();
-
         if (product.code != null && product.code.length() > 20) {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
@@ -78,9 +76,7 @@ public class ProductService {
     }
 
     public void delete(UUID id) {
-        ProductEntity entity = findById(id);
-
-        if (entity == null) throw new ProductNotFoundException();
+        findById(id);
 
         ProductEntity.deleteById(id);
     }

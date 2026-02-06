@@ -53,10 +53,6 @@ public class ProductEntity extends PanacheEntityBase {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ProductMaterialEntity> materials;
 
-    public static boolean existsById(UUID id) {
-        return findById(id) != null;
-    }
-
     public static boolean existsByCode(String code) {
         return count("code", code) > 0;
     }
