@@ -3,7 +3,7 @@ package com.autoflex.assessment.entity;
 import com.autoflex.assessment.exception.BusinessException;
 import com.autoflex.assessment.exception.ProductMaterialNotFoundException;
 import com.autoflex.assessment.exception.RawMaterialIdEmptyException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -56,8 +56,8 @@ public class ProductEntity extends PanacheEntityBase {
     @Column(name = "updated_at")
     public LocalDateTime updatedAt;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private final List<ProductMaterialEntity> materials = new ArrayList<>();
 
     public static boolean existsByCode(String code) {

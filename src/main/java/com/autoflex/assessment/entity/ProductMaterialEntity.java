@@ -1,6 +1,6 @@
 package com.autoflex.assessment.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -22,12 +22,11 @@ public class ProductMaterialEntity extends PanacheEntityBase {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     public ProductEntity product;
 
     @ManyToOne
     @JoinColumn(name = "raw_material_id", nullable = false)
-    @JsonIgnore
     public RawMaterialEntity rawMaterial;
 
     @Column(name = "quantity_needed", nullable = false)
