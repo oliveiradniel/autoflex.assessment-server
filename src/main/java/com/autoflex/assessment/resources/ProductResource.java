@@ -1,7 +1,7 @@
-package com.autoflex.assessment.resource;
+package com.autoflex.assessment.resources;
 
-import com.autoflex.assessment.entity.ProductEntity;
-import com.autoflex.assessment.service.ProductService;
+import com.autoflex.assessment.entities.ProductEntity;
+import com.autoflex.assessment.services.ProductService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;

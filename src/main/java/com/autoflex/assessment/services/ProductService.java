@@ -1,9 +1,9 @@
-package com.autoflex.assessment.service;
+package com.autoflex.assessment.services;
 
-import com.autoflex.assessment.entity.ProductEntity;
-import com.autoflex.assessment.entity.ProductMaterialEntity;
-import com.autoflex.assessment.entity.RawMaterialEntity;
-import com.autoflex.assessment.exception.*;
+import com.autoflex.assessment.entities.ProductEntity;
+import com.autoflex.assessment.entities.ProductMaterialEntity;
+import com.autoflex.assessment.entities.RawMaterialEntity;
+import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.math.BigDecimal;

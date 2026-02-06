@@ -1,4 +1,4 @@
-package com.autoflex.assessment.entity;
+package com.autoflex.assessment.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;

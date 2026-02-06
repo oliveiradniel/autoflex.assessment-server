@@ -1,6 +1,6 @@
-package com.autoflex.assessment.filter;
+package com.autoflex.assessment.filters;
 
-import com.autoflex.assessment.exception.EmptyJsonException;
+import com.autoflex.assessment.exceptions.EmptyJsonException;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;

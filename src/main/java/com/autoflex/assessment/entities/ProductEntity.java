@@ -1,8 +1,8 @@
-package com.autoflex.assessment.entity;
+package com.autoflex.assessment.entities;
 
-import com.autoflex.assessment.exception.BusinessException;
-import com.autoflex.assessment.exception.ProductMaterialNotFoundException;
-import com.autoflex.assessment.exception.RawMaterialIdEmptyException;
+import com.autoflex.assessment.exceptions.BusinessException;
+import com.autoflex.assessment.exceptions.ProductMaterialNotFoundException;
+import com.autoflex.assessment.exceptions.RawMaterialIdEmptyException;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;

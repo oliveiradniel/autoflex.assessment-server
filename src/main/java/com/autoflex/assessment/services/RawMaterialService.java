@@ -1,8 +1,8 @@
-package com.autoflex.assessment.service;
+package com.autoflex.assessment.services;
 
-import com.autoflex.assessment.entity.RawMaterialEntity;
+import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.enums.UnitType;
-import com.autoflex.assessment.exception.*;
+import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;

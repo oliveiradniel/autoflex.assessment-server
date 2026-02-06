@@ -1,4 +1,4 @@
-package com.autoflex.assessment.mapper;
+package com.autoflex.assessment.mappers;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

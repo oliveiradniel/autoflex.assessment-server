@@ -1,4 +1,4 @@
-package com.autoflex.assessment.exception;
+package com.autoflex.assessment.exceptions;
 
 public class EmptyJsonException extends BusinessException {
 

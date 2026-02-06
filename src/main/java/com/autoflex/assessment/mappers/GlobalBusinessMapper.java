@@ -1,6 +1,6 @@
-package com.autoflex.assessment.mapper;
+package com.autoflex.assessment.mappers;
 
-import com.autoflex.assessment.exception.BusinessException;
+import com.autoflex.assessment.exceptions.BusinessException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;

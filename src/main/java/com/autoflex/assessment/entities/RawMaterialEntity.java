@@ -1,4 +1,4 @@
-package com.autoflex.assessment.entity;
+package com.autoflex.assessment.entities;
 
 import com.autoflex.assessment.enums.UnitType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
