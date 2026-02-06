@@ -1,4 +1,4 @@
-package com.autoflex.assessment.controller;
+package com.autoflex.assessment.resource;
 
 import com.autoflex.assessment.entity.RawMaterialEntity;
 import com.autoflex.assessment.service.RawMaterialService;
@@ -15,11 +15,11 @@ import java.util.UUID;
 @Path("/raw-materials")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class RawMaterialController {
+public class RawMaterialResource {
 
     private final RawMaterialService rawMaterialService;
 
-    public RawMaterialController(RawMaterialService rawMaterialService) {
+    public RawMaterialResource(RawMaterialService rawMaterialService) {
         this.rawMaterialService = rawMaterialService;
     }
 

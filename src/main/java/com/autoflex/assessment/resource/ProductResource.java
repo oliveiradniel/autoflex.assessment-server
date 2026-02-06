@@ -1,4 +1,4 @@
-package com.autoflex.assessment.controller;
+package com.autoflex.assessment.resource;
 
 import com.autoflex.assessment.entity.ProductEntity;
 import com.autoflex.assessment.service.ProductService;
@@ -15,11 +15,11 @@ import java.util.UUID;
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ProductController  {
+public class ProductResource {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductResource(ProductService productService) {
         this.productService = productService;
     }
 
