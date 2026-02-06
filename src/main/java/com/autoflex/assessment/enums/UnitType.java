@@ -3,9 +3,17 @@ package com.autoflex.assessment.enums;
 import java.util.Arrays;
 
 public enum UnitType {
-    KG("Kilogram"),
-    L("Litter"),
-    UNIT("Unit");
+    KG("Kilogram"),         // large weighable solids
+    G("Gram"),              // small solids
+    L("Litre"),             // liquids
+    ML("Millilitre"),       // small liquids
+    UNIT("Unit"),           // individual pieces
+    PACK("Pack"),           // packages or sets
+    BOX("Box"),             // boxes
+    ROLL("Roll"),           // rolls, fabrics, tapes
+    SHEET("Sheet"),         // sheets, plates
+    M("Meter"),             // materials in length
+    CM("Centimeter");       // precision in length
 
     private final String description;
 
