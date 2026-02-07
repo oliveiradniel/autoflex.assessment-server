@@ -44,6 +44,9 @@ public class ProductEntity extends PanacheEntityBase {
     @NotNull(message = "Product price is required.")
     public BigDecimal price;
 
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    public Boolean isActive;
+
     @Column(length = 500, nullable = true)
     @Size(max = 500, message = "Description must be at most 500 characters.")
     public String description;

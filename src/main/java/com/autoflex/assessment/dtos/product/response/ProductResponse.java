@@ -15,6 +15,8 @@ public class ProductResponse {
 
     public BigDecimal price;
 
+    public Boolean isActive;
+
     public String description;
 
     public LocalDateTime createdAt;

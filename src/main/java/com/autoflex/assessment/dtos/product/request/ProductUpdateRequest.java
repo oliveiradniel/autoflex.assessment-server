@@ -18,6 +18,8 @@ public class ProductUpdateRequest {
     @DecimalMin(value = "0.01", message = "Price must be at least 0.01")
     public BigDecimal price;
 
+    public Boolean isActive;
+
     @Size(max = 500, message = "Description must be at most 500 characters.")
     public String description;
 

@@ -13,6 +13,7 @@ public class ProductMapper {
         response.code = product.code;
         response.name = product.name;
         response.price = product.price;
+        response.isActive = product.isActive;
         response.description = product.description;
         response.createdAt = product.createdAt;
         response.updatedAt = product.updatedAt;

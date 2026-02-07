@@ -75,6 +75,7 @@ public class ProductService {
 
         if (product.code != null) existingProduct.code = product.code;
         if (product.name != null) existingProduct.name = product.name;
+        if (product.isActive != null) existingProduct.isActive = product.isActive;
         if (product.description != null) existingProduct.description = product.description;
         if (product.price != null) existingProduct.price = product.price;
 
