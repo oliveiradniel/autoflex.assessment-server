@@ -34,10 +34,12 @@ public class ProductMaterialEntity extends PanacheEntityBase {
     public BigDecimal quantityNeeded;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false,
+            columnDefinition = "timestamp default now()")
     public LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false,
+            columnDefinition = "timestamp default now()")
     public LocalDateTime updatedAt;
 }

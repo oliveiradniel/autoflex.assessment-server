@@ -45,18 +45,20 @@ public class ProductEntity extends PanacheEntityBase {
     public BigDecimal price;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
-    public Boolean isActive;
+    public Boolean isActive = true;
 
     @Column(length = 500, nullable = true)
     @Size(max = 500, message = "Description must be at most 500 characters.")
     public String description;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false,
+            columnDefinition = "timestamp default now()")
     public LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false,
+            columnDefinition = "timestamp default now()")
     public LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
