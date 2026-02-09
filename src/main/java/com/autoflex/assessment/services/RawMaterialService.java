@@ -9,12 +9,15 @@ import com.autoflex.assessment.enums.UnitType;
 import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RawMaterialService {
+
+    private static final BigDecimal MIN_QUANTITY = new BigDecimal("0.01");
 
     public List<RawMaterialResponse> list() {
 
@@ -61,8 +64,8 @@ public class RawMaterialService {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
 
-        if (rawMaterial.stockQuantity != null && rawMaterial.stockQuantity < 0) {
-            throw new BusinessException("Stock quantity cannot be negative.", 422);
+        if (rawMaterial.stockQuantity == null || rawMaterial.stockQuantity.compareTo(MIN_QUANTITY) < 0) {
+            throw new BusinessException("Stock quantity needed must be at least 0.01", 422);
         }
 
         if (rawMaterial.unitType != null && !UnitType.isValid(rawMaterial.unitType.name())) {

@@ -1,9 +1,12 @@
 package com.autoflex.assessment.dtos.raw_material.request;
 
 import com.autoflex.assessment.enums.UnitType;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 
 public class RawMaterialCreateRequest {
 
@@ -14,9 +17,9 @@ public class RawMaterialCreateRequest {
     @NotBlank(message = "Raw material name is required.")
     public String name;
 
-    @Min(value = 0, message = "Stock quantity cannot be negative.")
+    @DecimalMin(value = "0.01", message = "Stock must be at least 0.01.")
     @NotNull(message = "Stock quantity is required.")
-    public Integer stockQuantity;
+    public BigDecimal stockQuantity;
 
     @NotNull(message = "Unit type is required.")
     @Enumerated(EnumType.STRING)

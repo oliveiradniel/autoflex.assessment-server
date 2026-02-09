@@ -3,13 +3,11 @@ package com.autoflex.assessment.entities;
 import com.autoflex.assessment.enums.UnitType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -32,8 +30,8 @@ public class RawMaterialEntity extends PanacheEntityBase {
 
     @Column(name = "stock_quantity", nullable = false)
     @NotNull(message = "Stock quantity is required.")
-    @Min(value = 0, message = "Stock quantity cannot be negative.")
-    public Integer stockQuantity;
+    @DecimalMin(value = "0.01", message = "Stock must be at least 0.01.")
+    public BigDecimal stockQuantity;
 
     @Column(name = "unit_type", nullable = false)
     @NotNull(message = "Unit type is required.")

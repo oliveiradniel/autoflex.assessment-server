@@ -2,6 +2,7 @@ package com.autoflex.assessment.dtos.raw_material.response;
 
 import com.autoflex.assessment.enums.UnitType;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class RawMaterialResponse {
 
     public String name;
 
-    public Integer stockQuantity;
+    public BigDecimal stockQuantity;
 
     public UnitType unitType;
 
