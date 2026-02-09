@@ -29,42 +29,70 @@ public class ProductEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    private UUID id;
 
     @Column(unique = true, length = 20, nullable = false)
     @Size(max = 20, message = "Code must be at most 20 characters.")
     @NotBlank(message = "Product code is required.")
-    public String code;
+    private String code;
 
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Product name is required.")
-    public String name;
+    private String name;
 
     @Column(nullable = false)
     @DecimalMin(value = "0.01", message = "Price must be at least 0.01.")
     @NotNull(message = "Product price is required.")
-    public BigDecimal price;
+    private BigDecimal price;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
-    public Boolean isActive = true;
+    private Boolean isActive = true;
 
     @Column(length = 500, nullable = true)
     @Size(max = 500, message = "Description must be at most 500 characters.")
-    public String description;
+    private String description;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false,
             columnDefinition = "timestamp default now()")
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false,
             columnDefinition = "timestamp default now()")
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private final List<ProductMaterialEntity> materials = new ArrayList<>();
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public List<ProductMaterialEntity> getMaterials() {
+        return Collections.unmodifiableList(materials);
+    }
 
     public static boolean existsByCode(String code) {
         return count("code", code) > 0;
@@ -74,16 +102,11 @@ public class ProductEntity extends PanacheEntityBase {
         return count("name", name) > 0;
     }
 
-    public List<ProductMaterialEntity> getMaterials() {
-
-        return Collections.unmodifiableList(materials);
-    }
-
     public void addRawMaterial(
             RawMaterialEntity rawMaterial, BigDecimal quantityNeeded
     ) {
 
-        if (rawMaterial == null || rawMaterial.id == null) {
+        if (rawMaterial == null || rawMaterial.getId() == null) {
             throw new BusinessException("Raw material is required", 422);
         }
 
@@ -92,8 +115,8 @@ public class ProductEntity extends PanacheEntityBase {
         }
 
         boolean alreadyExists = materials.stream()
-                .anyMatch(productMaterial -> productMaterial.rawMaterial != null
-                        && productMaterial.rawMaterial.id.equals(rawMaterial.id));
+                .anyMatch(productMaterial -> productMaterial.getRawMaterial() != null
+                        && productMaterial.getRawMaterial().getId().equals(rawMaterial.getId()));
 
         if (alreadyExists) {
             throw new BusinessException(
@@ -104,16 +127,16 @@ public class ProductEntity extends PanacheEntityBase {
 
         ProductMaterialEntity productMaterial = new ProductMaterialEntity();
 
-        productMaterial.product = this;
-        productMaterial.rawMaterial = rawMaterial;
-        productMaterial.quantityNeeded = quantityNeeded;
+        productMaterial.setProduct(this);
+        productMaterial.setRawMaterial(rawMaterial);
+        productMaterial.setQuantityNeeded(quantityNeeded);
 
         materials.add(productMaterial);
     }
 
     public void upsertRawMaterial(RawMaterialEntity rawMaterial, BigDecimal quantity) {
 
-        if (rawMaterial == null || rawMaterial.id == null) {
+        if (rawMaterial == null || rawMaterial.getId() == null) {
             throw new RawMaterialIdEmptyException();
         }
 
@@ -122,13 +145,13 @@ public class ProductEntity extends PanacheEntityBase {
         }
 
         ProductMaterialEntity found = materials.stream()
-                .filter(productMaterial -> productMaterial.rawMaterial != null
-                        && productMaterial.rawMaterial.id.equals(rawMaterial.id))
+                .filter(productMaterial -> productMaterial.getRawMaterial() != null
+                        && productMaterial.getRawMaterial().getId().equals(rawMaterial.getId()))
                 .findFirst()
                 .orElse(null);
 
         if (found != null) {
-            found.quantityNeeded = quantity;
+            found.setQuantityNeeded(quantity);
             return;
         }
 
@@ -143,7 +166,7 @@ public class ProductEntity extends PanacheEntityBase {
 
         boolean removed = materials.removeIf(
                 productMaterial -> productMaterial
-                        .rawMaterial.id.equals(rawMaterialId)
+                        .getRawMaterial().getId().equals(rawMaterialId)
         );
 
         if (!removed) {

@@ -9,24 +9,24 @@ public class ProductMapper {
 
         ProductResponse response = new ProductResponse();
 
-        response.id = product.id;
-        response.code = product.code;
-        response.name = product.name;
-        response.price = product.price;
-        response.isActive = product.isActive;
-        response.description = product.description;
-        response.createdAt = product.createdAt;
-        response.updatedAt = product.updatedAt;
+        response.id = product.getId();
+        response.code = product.getCode();
+        response.name = product.getName();
+        response.price = product.getPrice();
+        response.isActive = product.getIsActive();
+        response.description = product.getDescription();
+        response.createdAt = product.getCreatedAt();
+        response.updatedAt = product.getUpdatedAt();
 
         response.rawMaterials = product.getMaterials()
                 .stream().map(material -> {
             ProductResponse.RawMaterialQuantity rawMaterial = new ProductResponse.RawMaterialQuantity();
 
-            rawMaterial.rawMaterialId = material.rawMaterial.id;
-            rawMaterial.rawMaterialName = material.rawMaterial.name;
-            rawMaterial.quantityNeeded = material.quantityNeeded;
-            rawMaterial.createdAt = material.createdAt;
-            rawMaterial.updatedAt = material.updatedAt;
+            rawMaterial.rawMaterialId = material.getRawMaterial().getId();
+            rawMaterial.rawMaterialName = material.getRawMaterial().getName();
+            rawMaterial.quantityNeeded = material.getQuantityNeeded();
+            rawMaterial.createdAt = material.getCreatedAt();
+            rawMaterial.updatedAt = material.getUpdatedAt();
 
             return rawMaterial;
         }).toList();

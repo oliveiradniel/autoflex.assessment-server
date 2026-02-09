@@ -18,28 +18,46 @@ public class ProductMaterialEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     @JsonBackReference
-    public ProductEntity product;
+    private ProductEntity product;
 
     @ManyToOne
     @JoinColumn(name = "raw_material_id", nullable = false)
-    public RawMaterialEntity rawMaterial;
+    private RawMaterialEntity rawMaterial;
 
     @Column(name = "quantity_needed", nullable = false)
     @DecimalMin(value = "0.01", message = "Quantity needed must be at least 0.01")
-    public BigDecimal quantityNeeded;
+    private BigDecimal quantityNeeded;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false,
             columnDefinition = "timestamp default now()")
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false,
             columnDefinition = "timestamp default now()")
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public ProductEntity getProduct() { return product; }
+    public void setProduct(ProductEntity product) { this.product = product; }
+
+    public RawMaterialEntity getRawMaterial() { return rawMaterial; }
+    public void setRawMaterial(RawMaterialEntity rawMaterial) { this.rawMaterial = rawMaterial; }
+
+    public BigDecimal getQuantityNeeded() { return quantityNeeded; }
+    public void setQuantityNeeded(BigDecimal quantityNeeded) { this.quantityNeeded = quantityNeeded; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

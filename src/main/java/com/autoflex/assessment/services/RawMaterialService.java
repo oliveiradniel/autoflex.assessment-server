@@ -46,10 +46,10 @@ public class RawMaterialService {
 
         RawMaterialEntity createdRawMaterial = new RawMaterialEntity();
 
-        createdRawMaterial.code = rawMaterial.code;
-        createdRawMaterial.name = rawMaterial.name;
-        createdRawMaterial.stockQuantity = rawMaterial.stockQuantity;
-        createdRawMaterial.unitType = rawMaterial.unitType;
+        createdRawMaterial.setCode(rawMaterial.code);
+        createdRawMaterial.setName(rawMaterial.name);
+        createdRawMaterial.setStockQuantity(rawMaterial.stockQuantity);
+        createdRawMaterial.setUnitType(rawMaterial.unitType);
 
         createdRawMaterial.persistAndFlush();
 
@@ -72,22 +72,22 @@ public class RawMaterialService {
             throw new BusinessException("Invalid unit type", 422);
         }
 
-        if (rawMaterial.code != null && !rawMaterial.code.equals(entity.code)) {
+        if (rawMaterial.code != null && !rawMaterial.code.equals(entity.getCode())) {
             if (RawMaterialEntity.existsByCode(rawMaterial.code)) {
                 throw new CodeAlreadyInUseException();
             }
         }
 
-        if (rawMaterial.name != null && !rawMaterial.name.equals(entity.name)) {
+        if (rawMaterial.name != null && !rawMaterial.name.equals(entity.getName())) {
             if (RawMaterialEntity.existsByName(rawMaterial.name)) {
                 throw new NameAlreadyInUseException();
             }
         }
 
-        if (rawMaterial.stockQuantity != null) entity.stockQuantity = rawMaterial.stockQuantity;
-        if (rawMaterial.unitType != null) entity.unitType = rawMaterial.unitType;
-        if (rawMaterial.code != null) entity.code = rawMaterial.code;
-        if (rawMaterial.name != null) entity.name = rawMaterial.name;
+        if (rawMaterial.stockQuantity != null) entity.setStockQuantity(rawMaterial.stockQuantity);
+        if (rawMaterial.unitType != null) entity.setUnitType(rawMaterial.unitType);
+        if (rawMaterial.code != null) entity.setCode(rawMaterial.code);
+        if (rawMaterial.name != null) entity.setName(rawMaterial.name);
 
         RawMaterialEntity.persist(entity);
 

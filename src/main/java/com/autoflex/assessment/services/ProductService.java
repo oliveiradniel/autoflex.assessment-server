@@ -53,10 +53,10 @@ public class ProductService {
 
         ProductEntity createdProduct = new ProductEntity();
 
-        createdProduct.code = product.code;
-        createdProduct.name = product.name;
-        createdProduct.price = product.price;
-        createdProduct.description = product.description;
+        createdProduct.setCode(product.code);
+        createdProduct.setName(product.name);
+        createdProduct.setPrice(product.price);
+        createdProduct.setDescription(product.description);
 
         for (ProductCreateRequest.RawMaterialQuantity material : product.materials) {
             RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.rawMaterialId);
@@ -176,11 +176,11 @@ public class ProductService {
 
         validateBasicFields(product, existingProduct);
 
-        if (product.code != null) existingProduct.code = product.code;
-        if (product.name != null) existingProduct.name = product.name;
-        if (product.isActive != null) existingProduct.isActive = product.isActive;
-        if (product.description != null) existingProduct.description = product.description;
-        if (product.price != null) existingProduct.price = product.price;
+        if (product.code != null) existingProduct.setCode(product.code);
+        if (product.name != null) existingProduct.setName(product.name);
+        if (product.isActive != null) existingProduct.setIsActive(product.isActive);
+        if (product.description != null) existingProduct.setDescription(product.description);
+        if (product.price != null) existingProduct.setPrice(product.price);
 
         if (product.materials != null) {
 
@@ -205,7 +205,7 @@ public class ProductService {
 
             // Store all the IDs of the materials that were not
             List<UUID> materialsToRemove = existingProduct.getMaterials().stream()
-                    .map(productMaterial -> productMaterial.rawMaterial.id)
+                    .map(productMaterial -> productMaterial.getRawMaterial().getId())
                     .filter(rawMaterialId -> !materialIds.contains(rawMaterialId))
                     .toList();
 
@@ -243,12 +243,12 @@ public class ProductService {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
 
-        if (product.code != null && !product.code.equals(existingProduct.code)
+        if (product.code != null && !product.code.equals(existingProduct.getCode())
                 && ProductEntity.existsByCode(product.code)) {
             throw new CodeAlreadyInUseException();
         }
 
-        if (product.name != null && !product.name.equals(existingProduct.name)
+        if (product.name != null && !product.name.equals(existingProduct.getCode())
                 && ProductEntity.existsByName(product.name)) {
             throw new NameAlreadyInUseException();
         }
