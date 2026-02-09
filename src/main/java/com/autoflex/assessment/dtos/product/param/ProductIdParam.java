@@ -9,5 +9,8 @@ public class ProductIdParam {
 
     @PathParam("id")
     @NotNull(message = "Product ID is required.")
-    public UUID id;
+    private UUID id;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 }

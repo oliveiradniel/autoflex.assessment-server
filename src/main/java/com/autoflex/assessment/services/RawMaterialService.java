@@ -36,20 +36,20 @@ public class RawMaterialService {
 
     public RawMaterialResponse create(RawMaterialCreateRequest rawMaterial) {
 
-        if (RawMaterialEntity.existsByCode(rawMaterial.code)) {
+        if (RawMaterialEntity.existsByCode(rawMaterial.getCode())) {
             throw new CodeAlreadyInUseException();
         }
 
-        if (RawMaterialEntity.existsByName(rawMaterial.name)) {
+        if (RawMaterialEntity.existsByName(rawMaterial.getName())) {
             throw new NameAlreadyInUseException();
         }
 
         RawMaterialEntity createdRawMaterial = new RawMaterialEntity();
 
-        createdRawMaterial.setCode(rawMaterial.code);
-        createdRawMaterial.setName(rawMaterial.name);
-        createdRawMaterial.setStockQuantity(rawMaterial.stockQuantity);
-        createdRawMaterial.setUnitType(rawMaterial.unitType);
+        createdRawMaterial.setCode(rawMaterial.getCode());
+        createdRawMaterial.setName(rawMaterial.getName());
+        createdRawMaterial.setStockQuantity(rawMaterial.getStockQuantity());
+        createdRawMaterial.setUnitType(rawMaterial.getUnitType());
 
         createdRawMaterial.persistAndFlush();
 
@@ -60,34 +60,29 @@ public class RawMaterialService {
 
         RawMaterialEntity entity = findEntityById(id);
 
-        if (rawMaterial.code != null && rawMaterial.code.length() > 20) {
+        if (rawMaterial.getCode() != null && rawMaterial.getCode().length() > 20) {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
 
-        if (rawMaterial.stockQuantity == null || rawMaterial.stockQuantity.compareTo(MIN_QUANTITY) < 0) {
+        if (rawMaterial.getStockQuantity() == null || rawMaterial.getStockQuantity().compareTo(MIN_QUANTITY) < 0) {
             throw new BusinessException("Stock quantity needed must be at least 0.01", 422);
         }
 
-        if (rawMaterial.unitType != null && !UnitType.isValid(rawMaterial.unitType.name())) {
-            throw new BusinessException("Invalid unit type", 422);
-        }
-
-        if (rawMaterial.code != null && !rawMaterial.code.equals(entity.getCode())) {
-            if (RawMaterialEntity.existsByCode(rawMaterial.code)) {
+        if (rawMaterial.getCode() != null && !rawMaterial.getCode().equals(entity.getCode())) {
+            if (RawMaterialEntity.existsByCode(rawMaterial.getCode())) {
                 throw new CodeAlreadyInUseException();
             }
         }
 
-        if (rawMaterial.name != null && !rawMaterial.name.equals(entity.getName())) {
-            if (RawMaterialEntity.existsByName(rawMaterial.name)) {
+        if (rawMaterial.getName() != null && !rawMaterial.getName().equals(entity.getName())) {
+            if (RawMaterialEntity.existsByName(rawMaterial.getName())) {
                 throw new NameAlreadyInUseException();
             }
         }
 
-        if (rawMaterial.stockQuantity != null) entity.setStockQuantity(rawMaterial.stockQuantity);
-        if (rawMaterial.unitType != null) entity.setUnitType(rawMaterial.unitType);
-        if (rawMaterial.code != null) entity.setCode(rawMaterial.code);
-        if (rawMaterial.name != null) entity.setName(rawMaterial.name);
+        if (rawMaterial.getStockQuantity() != null) entity.setStockQuantity(rawMaterial.getStockQuantity());
+        if (rawMaterial.getCode() != null) entity.setCode(rawMaterial.getCode());
+        if (rawMaterial.getName() != null) entity.setName(rawMaterial.getName());
 
         RawMaterialEntity.persist(entity);
 

@@ -187,9 +187,9 @@ public class ProductEntity extends PanacheEntityBase {
 
         ProductSummaryResponse summary = new ProductSummaryResponse();
 
-        summary.total = ((Number) result[0]).intValue();
-        summary.active = ((Number) result[1]).intValue();
-        summary.inactive = ((Number) result[2]).intValue();
+        summary.setTotal(((Number) result[0]).intValue());
+        summary.setActive(((Number) result[1]).intValue());
+        summary.setInactive(((Number) result[2]).intValue());
 
         return summary;
     }

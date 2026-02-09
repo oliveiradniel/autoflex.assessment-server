@@ -2,9 +2,18 @@ package com.autoflex.assessment.dtos.product.response;
 
 public class ProductSummaryResponse {
 
-    public Integer total;
+    private Integer total;
 
-    public Integer active;
+    private Integer active;
 
-    public Integer inactive;
+    private Integer inactive;
+
+    public Integer getTotal() { return total; }
+    public void setTotal(Integer total) { this.total = total; }
+
+    public Integer getActive() { return active; }
+    public void setActive(Integer active) { this.active = active; }
+
+    public Integer getInactive() { return inactive; }
+    public void setInactive(Integer inactive) { this.inactive = inactive; }
 }

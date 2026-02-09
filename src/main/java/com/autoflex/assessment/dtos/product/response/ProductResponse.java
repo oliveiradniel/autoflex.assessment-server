@@ -1,5 +1,8 @@
 package com.autoflex.assessment.dtos.product.response;
 
+import com.autoflex.assessment.dtos.product.request.ProductCreateRequest;
+import com.autoflex.assessment.dtos.product.request.ProductUpdateRequest;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,37 +10,76 @@ import java.util.UUID;
 
 public class ProductResponse {
 
-    public UUID id;
+    private UUID id;
 
-    public String code;
+    private String code;
 
-    public String name;
+    private String name;
 
-    public BigDecimal price;
+    private BigDecimal price;
 
-    public Boolean isActive;
+    private Boolean isActive;
 
-    public String description;
+    private String description;
 
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
-    public List<RawMaterialQuantity> rawMaterials;
+    private List<RawMaterialQuantity> rawMaterials;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public List<RawMaterialQuantity> getRawMaterials() { return rawMaterials; }
+    public void setRawMaterials(List<RawMaterialQuantity> rawMaterials) { this.rawMaterials = rawMaterials; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public static class RawMaterialQuantity {
 
-        public UUID rawMaterialId;
+        private UUID rawMaterialId;
 
-        public String rawMaterialName;
+        private String rawMaterialName;
 
-        public BigDecimal quantityNeeded;
+        private BigDecimal quantityNeeded;
 
-        public LocalDateTime createdAt;
+        private LocalDateTime createdAt;
 
-        public LocalDateTime updatedAt;
+        private LocalDateTime updatedAt;
+
+        public UUID getRawMaterialId() { return rawMaterialId; }
+        public void setRawMaterialId(UUID rawMaterialId) { this.rawMaterialId = rawMaterialId; }
+
+        public String getRawMaterialName() { return rawMaterialName; }
+        public void setRawMaterialName(String rawMaterialName) { this.rawMaterialName = rawMaterialName; }
+
+        public BigDecimal getQuantityNeeded() { return quantityNeeded; }
+        public void setQuantityNeeded(BigDecimal quantityNeeded) { this.quantityNeeded = quantityNeeded; }
+
+        public LocalDateTime getCreatedAt() { return createdAt; }
+        public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+        public LocalDateTime getUpdatedAt() { return updatedAt; }
+        public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     }
-
-    public UUID getId() { return id; }
-
 }

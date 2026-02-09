@@ -8,17 +8,38 @@ import java.util.UUID;
 
 public class RawMaterialResponse {
 
-  public UUID id;
+  private UUID id;
 
-  public String code;
+  private String code;
 
-  public String name;
+  private String name;
 
-  public BigDecimal stockQuantity;
+  private BigDecimal stockQuantity;
 
-  public UnitType unitType;
+  private UnitType unitType;
 
-  public LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
-  public LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public BigDecimal getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(BigDecimal stockQuantity) { this.stockQuantity = stockQuantity; }
+
+    public UnitType getUnitType() { return unitType; }
+    public void setUnitType(UnitType unitType) { this.unitType = unitType; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

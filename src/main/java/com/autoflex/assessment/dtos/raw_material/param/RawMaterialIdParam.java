@@ -8,5 +8,8 @@ public class RawMaterialIdParam {
 
     @PathParam("id")
     @NotNull(message = "Raw material ID is required.")
-    public UUID id;
+    private UUID id;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 }

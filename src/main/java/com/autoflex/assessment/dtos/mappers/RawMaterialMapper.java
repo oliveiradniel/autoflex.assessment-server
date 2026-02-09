@@ -9,13 +9,13 @@ public class RawMaterialMapper {
 
         RawMaterialResponse response = new RawMaterialResponse();
 
-        response.id = rawMaterial.getId();
-        response.code = rawMaterial.getCode();
-        response.name = rawMaterial.getName();
-        response.stockQuantity = rawMaterial.getStockQuantity();
-        response.unitType = rawMaterial.getUnitType();
-        response.createdAt = rawMaterial.getCreatedAt();
-        response.updatedAt = rawMaterial.getUpdatedAt();
+        response.setId(rawMaterial.getId());
+        response.setCode(rawMaterial.getCode());
+        response.setName(rawMaterial.getName());
+        response.setStockQuantity(rawMaterial.getStockQuantity());
+        response.setUnitType(rawMaterial.getUnitType());
+        response.setCreatedAt(rawMaterial.getCreatedAt());
+        response.setUpdatedAt(rawMaterial.getUpdatedAt());
 
         return response;
     }

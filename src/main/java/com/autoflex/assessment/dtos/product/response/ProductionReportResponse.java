@@ -8,34 +8,76 @@ import java.util.UUID;
 
 public class ProductionReportResponse {
 
-    public UUID productId;
+    private UUID productId;
 
-    public String productCode;
+    private String productCode;
 
-    public String productName;
+    private String productName;
 
-    public Integer produceQuantity;
+    private Integer produceQuantity;
 
-    public Integer totalValue;
+    private Integer totalValue;
 
-    public List<RawMaterialInfo> rawMaterials;
+    private List<RawMaterial> rawMaterials;
 
-    public static class RawMaterialInfo {
+    public UUID getProductId() { return productId; }
+    public void setProductId(UUID productId) { this.productId = productId; }
 
-        public UUID materialId;
+    public String getProductCode() { return productCode; }
+    public void setProductCode(String productCode) { this.productCode = productCode; }
 
-        public String materialCode;
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
 
-        public String materialName;
+    public Integer getProduceQuantity() { return produceQuantity; }
+    public void setProduceQuantity(Integer produceQuantity) { this.produceQuantity = produceQuantity; }
 
-        public UnitType materialUnitType;
+    public Integer getTotalValue() { return totalValue; }
+    public void setTotalValue(Integer totalValue) { this.totalValue = totalValue; }
 
-        public BigDecimal requiredQuantity;
+    public List<RawMaterial> getRawMaterials() { return rawMaterials; }
+    public void setRawMaterials(List<RawMaterial> rawMaterials) { this.rawMaterials = rawMaterials; }
 
-        public BigDecimal initialStock;
+    public static class RawMaterial {
 
-        public BigDecimal consumedQuantity;
+        private UUID rawMaterialId;
 
-        public BigDecimal remainingStock;
+        private String rawMaterialCode;
+
+        private String rawMaterialName;
+
+        private UnitType rawMaterialUnitType;
+
+        private BigDecimal requiredQuantity;
+
+        private BigDecimal initialStock;
+
+        private BigDecimal consumedQuantity;
+
+        private BigDecimal remainingStock;
+
+        public UUID getRawMaterialId() { return rawMaterialId; }
+        public void setRawMaterialId(UUID rawMaterialId) { this.rawMaterialId = rawMaterialId; }
+
+        public String getRawMaterialCode() { return rawMaterialCode; }
+        public void setRawMaterialCode(String rawMaterialCode) { this.rawMaterialCode = rawMaterialCode; }
+
+        public String getRawMaterialName() { return rawMaterialName; }
+        public void setRawMaterialName(String rawMaterialName) { this.rawMaterialName = rawMaterialName; }
+
+        public UnitType getRawMaterialUnitType() { return rawMaterialUnitType; }
+        public void setRawMaterialUnitType(UnitType rawMaterialUnitType) { this.rawMaterialUnitType = rawMaterialUnitType; }
+
+        public BigDecimal getRequiredQuantity() { return requiredQuantity; }
+        public void setRequiredQuantity(BigDecimal requiredQuantity) { this.requiredQuantity = requiredQuantity; }
+
+        public BigDecimal getInitialStock() { return initialStock; }
+        public void setInitialStock(BigDecimal initialStock) { this.initialStock = initialStock; }
+
+        public BigDecimal getConsumedQuantity() { return consumedQuantity; }
+        public void setConsumedQuantity(BigDecimal consumedQuantity) { this.consumedQuantity = consumedQuantity; }
+
+        public BigDecimal getRemainingStock() { return remainingStock; }
+        public void setRemainingStock(BigDecimal remainingStock) { this.remainingStock = remainingStock; }
     }
 }

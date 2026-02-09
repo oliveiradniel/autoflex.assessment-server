@@ -43,25 +43,28 @@ public class ProductService {
 
     public ProductResponse create(ProductCreateRequest product) {
 
-        if (ProductEntity.existsByCode(product.code)) {
+        if (ProductEntity.existsByCode(product.getCode())) {
             throw new CodeAlreadyInUseException();
         }
 
-        if (ProductEntity.existsByName(product.name)) {
+        if (ProductEntity.existsByName(product.getName())) {
             throw new NameAlreadyInUseException();
         }
 
         ProductEntity createdProduct = new ProductEntity();
 
-        createdProduct.setCode(product.code);
-        createdProduct.setName(product.name);
-        createdProduct.setPrice(product.price);
-        createdProduct.setDescription(product.description);
+        createdProduct.setCode(product.getCode());
+        createdProduct.setName(product.getName());
+        createdProduct.setPrice(product.getPrice());
+        createdProduct.setDescription(product.getDescription());
 
-        for (ProductCreateRequest.RawMaterialQuantity material : product.materials) {
-            RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.rawMaterialId);
+        if (product.getMaterials() != null) {
 
-            createdProduct.addRawMaterial(rawMaterial, material.quantityNeeded);
+            for (ProductCreateRequest.RawMaterialQuantity material : product.getMaterials()) {
+                RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.getRawMaterialId());
+
+                createdProduct.addRawMaterial(rawMaterial, material.getQuantityNeeded());
+            }
         }
 
         createdProduct.persistAndFlush();
@@ -77,14 +80,14 @@ public class ProductService {
         Map<UUID, RawMaterialResponse> rawMaterialMap = new HashMap<>();
 
         for (RawMaterialResponse rawMaterial : rawMaterials) {
-            virtualStock.put(rawMaterial.id, rawMaterial.stockQuantity);
-            rawMaterialMap.put(rawMaterial.id, rawMaterial);
+            virtualStock.put(rawMaterial.getId(), rawMaterial.getStockQuantity());
+            rawMaterialMap.put(rawMaterial.getId(), rawMaterial);
         }
 
         List<ProductResponse> products = list();
 
         products.sort(
-                Comparator.comparing((ProductResponse p) -> p.id).reversed()
+                Comparator.comparing(ProductResponse::getId).reversed()
         );
 
         List<ProductionReportResponse> productionReport = new ArrayList<>();
@@ -94,12 +97,12 @@ public class ProductService {
             BigDecimal maxProducible = new BigDecimal(Integer.MAX_VALUE);
             boolean hasMaterials = false;
 
-            for (ProductResponse.RawMaterialQuantity productMaterial : product.rawMaterials) {
+            for (ProductResponse.RawMaterialQuantity productMaterial : product.getRawMaterials()) {
 
                 hasMaterials = true;
 
-                BigDecimal stock = virtualStock.get(productMaterial.rawMaterialId);
-                BigDecimal quantityNeeded = productMaterial.quantityNeeded;
+                BigDecimal stock = virtualStock.get(productMaterial.getRawMaterialId());
+                BigDecimal quantityNeeded = productMaterial.getQuantityNeeded();
 
                 if (stock == null || stock.compareTo(BigDecimal.ZERO) <= 0) {
                     maxProducible = BigDecimal.ZERO;
@@ -117,52 +120,51 @@ public class ProductService {
                 continue;
             }
 
-            List<ProductionReportResponse.RawMaterialInfo> rawMaterialInfos = new ArrayList<>();
+            List<ProductionReportResponse.RawMaterial> rawMaterialInfos = new ArrayList<>();
 
-            for (ProductResponse.RawMaterialQuantity productMaterial : product.rawMaterials) {
+            for (ProductResponse.RawMaterialQuantity productMaterial : product.getRawMaterials()) {
 
-                UUID materialId = productMaterial.rawMaterialId;
+                UUID materialId = productMaterial.getRawMaterialId();
 
                 BigDecimal stockBefore = virtualStock.get(materialId);
-                BigDecimal consumed = productMaterial.quantityNeeded.multiply(maxProducible);
+                BigDecimal consumed = productMaterial.getQuantityNeeded().multiply(maxProducible);
                 BigDecimal stockAfter = stockBefore.subtract(consumed);
 
                 RawMaterialResponse rawMaterial = rawMaterialMap.get(materialId);
 
-                ProductionReportResponse.RawMaterialInfo info =
-                        new ProductionReportResponse.RawMaterialInfo();
+                ProductionReportResponse.RawMaterial info =
+                        new ProductionReportResponse.RawMaterial();
 
-                info.materialId = rawMaterial.id;
-                info.materialCode = rawMaterial.code;
-                info.materialName = rawMaterial.name;
-                info.materialUnitType = rawMaterial.unitType;
-                info.requiredQuantity = productMaterial.quantityNeeded;
-                info.initialStock = stockBefore;
-                info.consumedQuantity = consumed;
-                info.remainingStock = stockAfter;
+                info.setRawMaterialId(rawMaterial.getId());
+                info.setRawMaterialCode(rawMaterial.getCode());
+                info.setRawMaterialName(rawMaterial.getName());
+                info.setRawMaterialUnitType(rawMaterial.getUnitType());
+                info.setRequiredQuantity(productMaterial.getQuantityNeeded());
+                info.setInitialStock(stockBefore);
+                info.setConsumedQuantity(consumed);
+                info.setRemainingStock(stockAfter);
 
                 rawMaterialInfos.add(info);
             }
 
-            for (ProductResponse.RawMaterialQuantity productMaterial : product.rawMaterials) {
+            for (ProductResponse.RawMaterialQuantity productMaterial : product.getRawMaterials()) {
 
-                UUID materialId = productMaterial.rawMaterialId;
+                UUID materialId = productMaterial.getRawMaterialId();
 
                 BigDecimal stock = virtualStock.get(materialId);
-                BigDecimal consumed = productMaterial.quantityNeeded.multiply(maxProducible);
+                BigDecimal consumed = productMaterial.getQuantityNeeded().multiply(maxProducible);
 
                 virtualStock.put(materialId, stock.subtract(consumed));
             }
 
             ProductionReportResponse productReport = new ProductionReportResponse();
 
-            productReport.productId = product.id;
-            productReport.productName = product.name;
-            productReport.productCode = product.code;
-            productReport.produceQuantity = maxProducible.intValue();
-            productReport.totalValue =
-                    product.price.multiply(maxProducible).intValue();
-            productReport.rawMaterials = rawMaterialInfos;
+            productReport.setProductId(product.getId());
+            productReport.setProductName(product.getName());
+            productReport.setProductCode(product.getCode());
+            productReport.setProduceQuantity(maxProducible.intValue());
+            productReport.setTotalValue(product.getPrice().multiply(maxProducible).intValue());
+            productReport.setRawMaterials(rawMaterialInfos);
 
             productionReport.add(productReport);
         }
@@ -176,31 +178,31 @@ public class ProductService {
 
         validateBasicFields(product, existingProduct);
 
-        if (product.code != null) existingProduct.setCode(product.code);
-        if (product.name != null) existingProduct.setName(product.name);
-        if (product.isActive != null) existingProduct.setIsActive(product.isActive);
-        if (product.description != null) existingProduct.setDescription(product.description);
-        if (product.price != null) existingProduct.setPrice(product.price);
+        if (product.getCode() != null) existingProduct.setCode(product.getCode());
+        if (product.getName() != null) existingProduct.setName(product.getName());
+        if (product.getIsActive() != null) existingProduct.setIsActive(product.getIsActive());
+        if (product.getDescription() != null) existingProduct.setDescription(product.getDescription());
+        if (product.getPrice() != null) existingProduct.setPrice(product.getPrice());
 
-        if (product.materials != null) {
+        if (product.getMaterials() != null) {
 
             // Store all the raw material IDs of the shipped product
-            Set<UUID> materialIds = product.materials.stream()
+            Set<UUID> materialIds = product.getMaterials().stream()
                     .map(material -> {
-                        if (material.rawMaterialId == null) {
+                        if (material.getRawMaterialId() == null) {
                             throw new RawMaterialIdEmptyException();
                         }
 
-                        return material.rawMaterialId;
+                        return material.getRawMaterialId();
                     })
                     .collect(Collectors.toSet());
 
             // Go through all the raw materials sent to the association and make upserts
-            for (ProductUpdateRequest.RawMaterialQuantity material : product.materials) {
+            for (ProductUpdateRequest.RawMaterialQuantity material : product.getMaterials()) {
 
-                RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.rawMaterialId);
+                RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.getRawMaterialId());
 
-                existingProduct.upsertRawMaterial(rawMaterial, material.quantityNeeded);
+                existingProduct.upsertRawMaterial(rawMaterial, material.getQuantityNeeded());
             }
 
             // Store all the IDs of the materials that were not
@@ -239,26 +241,26 @@ public class ProductService {
 
     private void validateBasicFields(ProductUpdateRequest product, ProductEntity existingProduct) {
 
-        if (product.code != null && product.code.length() > 20) {
+        if (product.getCode() != null && product.getCode().length() > 20) {
             throw new BusinessException("Code must be at most 20 characters.", 422);
         }
 
-        if (product.code != null && !product.code.equals(existingProduct.getCode())
-                && ProductEntity.existsByCode(product.code)) {
+        if (product.getCode() != null && !product.getCode().equals(existingProduct.getCode())
+                && ProductEntity.existsByCode(product.getCode())) {
             throw new CodeAlreadyInUseException();
         }
 
-        if (product.name != null && !product.name.equals(existingProduct.getCode())
-                && ProductEntity.existsByName(product.name)) {
+        if (product.getName() != null && !product.getName().equals(existingProduct.getName())
+                && ProductEntity.existsByName(product.getName())) {
             throw new NameAlreadyInUseException();
         }
 
-        if (product.price != null
-                && product.price.compareTo(new BigDecimal("0.01")) < 0) {
+        if (product.getPrice() != null
+                && product.getPrice().compareTo(new BigDecimal("0.01")) < 0) {
             throw new BusinessException("Price must be at least 0.01", 422);
         }
 
-        if (product.description != null && product.description.length() > 500) {
+        if (product.getDescription() != null && product.getDescription().length() > 500) {
             throw new BusinessException("Description must be at most 500 characters.", 422);
         }
     }

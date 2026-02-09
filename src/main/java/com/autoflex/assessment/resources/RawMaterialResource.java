@@ -31,7 +31,7 @@ public class RawMaterialResource {
     @GET
     @Path("/{id}")
     public Response findById(@BeanParam @Valid ProductIdParam param) {
-        return Response.ok(rawMaterialService.findById(param.id)).build();
+        return Response.ok(rawMaterialService.findById(param.getId())).build();
     }
 
     @Context
@@ -41,7 +41,7 @@ public class RawMaterialResource {
     public Response create(@Valid RawMaterialCreateRequest rawMaterial) {
         var createdRawMaterial = rawMaterialService.create(rawMaterial);
 
-        var uri = uriInfo.getAbsolutePathBuilder().path(createdRawMaterial.id.toString()).build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(createdRawMaterial.getId().toString()).build();
 
         return Response.created(uri).entity(createdRawMaterial).build();
     }
@@ -50,14 +50,14 @@ public class RawMaterialResource {
     @Transactional
     @Path("/{id}")
     public Response update(@BeanParam @Valid ProductIdParam param, RawMaterialUpdateRequest rawMaterial) {
-        return Response.ok(rawMaterialService.update(param.id, rawMaterial)).build();
+        return Response.ok(rawMaterialService.update(param.getId(), rawMaterial)).build();
     }
 
     @DELETE
     @Transactional
     @Path("/{id}")
     public Response delete(@BeanParam @Valid ProductIdParam param) {
-        rawMaterialService.delete(param.id);
+        rawMaterialService.delete(param.getId());
 
         return Response.noContent().build();
     }

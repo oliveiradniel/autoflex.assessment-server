@@ -33,7 +33,7 @@ public class ProductResource {
     @GET
     @Path("/{id}")
     public Response findById(@BeanParam @Valid ProductIdParam param) {
-        return Response.ok(productService.findById(param.id)).build();
+        return Response.ok(productService.findById(param.getId())).build();
     }
 
     @GET
@@ -49,7 +49,7 @@ public class ProductResource {
     public Response create(@Valid ProductCreateRequest product) {
         ProductResponse createdProduct = productService.create(product);
 
-        var uri = uriInfo.getAbsolutePathBuilder().path(createdProduct.id.toString()).build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(createdProduct.getId().toString()).build();
 
         return Response.created(uri).entity(createdProduct).build();
     }
@@ -67,14 +67,14 @@ public class ProductResource {
             @BeanParam @Valid ProductIdParam param,
             ProductUpdateRequest product
     ) {
-        return Response.ok(productService.update(param.id, product)).build();
+        return Response.ok(productService.update(param.getId(), product)).build();
     }
 
     @DELETE
     @Transactional
     @Path("/{id}")
     public Response delete(@BeanParam @Valid ProductIdParam param) {
-        productService.delete(param.id);
+        productService.delete(param.getId());
 
         return Response.noContent().build();
     }
