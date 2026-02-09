@@ -8,17 +8,17 @@ import java.util.UUID;
 
 public class RawMaterialResponse {
 
-    public UUID id;
+  public UUID id;
 
-    public String code;
+  public String code;
 
-    public String name;
+  public String name;
 
-    public BigDecimal stockQuantity;
+  public BigDecimal stockQuantity;
 
-    public UnitType unitType;
+  public UnitType unitType;
 
-    public LocalDateTime createdAt;
+  public LocalDateTime createdAt;
 
-    public LocalDateTime updatedAt;
+  public LocalDateTime updatedAt;
 }

@@ -23,7 +23,7 @@ public class ProductResponse {
 
     public LocalDateTime updatedAt;
 
-    public List<RawMaterialQuantity> materials;
+    public List<RawMaterialQuantity> rawMaterials;
 
     public static class RawMaterialQuantity {
 
@@ -37,4 +37,7 @@ public class ProductResponse {
 
         public LocalDateTime updatedAt;
     }
+
+    public UUID getId() { return id; }
+
 }

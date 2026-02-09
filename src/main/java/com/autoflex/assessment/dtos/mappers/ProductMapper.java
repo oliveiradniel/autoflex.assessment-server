@@ -18,7 +18,7 @@ public class ProductMapper {
         response.createdAt = product.createdAt;
         response.updatedAt = product.updatedAt;
 
-        response.materials = product.getMaterials()
+        response.rawMaterials = product.getMaterials()
                 .stream().map(material -> {
             ProductResponse.RawMaterialQuantity rawMaterial = new ProductResponse.RawMaterialQuantity();
 

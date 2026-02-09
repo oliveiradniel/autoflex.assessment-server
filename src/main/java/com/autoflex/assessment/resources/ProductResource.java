@@ -57,7 +57,7 @@ public class ProductResource {
     @GET
     @Path("/calculate-production")
     public Response calculateProduction() {
-        return Response.ok().build();
+        return Response.ok(productService.calculateProduction()).build();
     }
 
     @PATCH
