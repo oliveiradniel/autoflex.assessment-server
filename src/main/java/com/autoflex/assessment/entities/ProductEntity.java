@@ -1,5 +1,6 @@
 package com.autoflex.assessment.entities;
 
+import com.autoflex.assessment.dtos.product.response.ProductSummaryResponse;
 import com.autoflex.assessment.exceptions.BusinessException;
 import com.autoflex.assessment.exceptions.ProductMaterialNotFoundException;
 import com.autoflex.assessment.exceptions.RawMaterialIdEmptyException;
@@ -40,7 +41,7 @@ public class ProductEntity extends PanacheEntityBase {
     public String name;
 
     @Column(nullable = false)
-    @DecimalMin(value = "0.01", message = "Price must be at least 0.01")
+    @DecimalMin(value = "0.01", message = "Price must be at least 0.01.")
     @NotNull(message = "Product price is required.")
     public BigDecimal price;
 
@@ -148,5 +149,25 @@ public class ProductEntity extends PanacheEntityBase {
         if (!removed) {
             throw new ProductMaterialNotFoundException();
         }
+    }
+
+    public static ProductSummaryResponse getSummary() {
+        Object[] result = (Object[]) getEntityManager()
+                .createNativeQuery("""
+                    SELECT
+                        COUNT(*) as total,
+                        COUNT(*) FILTER (WHERE is_active = true) as active,
+                        COUNT(*) FILTER (WHERE is_active = false) as inactive
+                    FROM tb_products
+                """)
+                .getSingleResult();
+
+        ProductSummaryResponse summary = new ProductSummaryResponse();
+
+        summary.total = ((Number) result[0]).intValue();
+        summary.active = ((Number) result[1]).intValue();
+        summary.inactive = ((Number) result[2]).intValue();
+
+        return summary;
     }
 }

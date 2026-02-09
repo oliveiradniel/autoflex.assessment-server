@@ -4,15 +4,14 @@ import com.autoflex.assessment.dtos.mappers.ProductMapper;
 import com.autoflex.assessment.dtos.product.request.ProductCreateRequest;
 import com.autoflex.assessment.dtos.product.request.ProductUpdateRequest;
 import com.autoflex.assessment.dtos.product.response.ProductResponse;
+import com.autoflex.assessment.dtos.product.response.ProductSummaryResponse;
 import com.autoflex.assessment.entities.ProductEntity;
 import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -122,6 +121,10 @@ public class ProductService {
         ProductResponse product = findById(id);
 
         ProductEntity.deleteById(id);
+    }
+
+    public ProductSummaryResponse getSummary() {
+        return ProductEntity.getSummary();
     }
 
     private ProductEntity findEntityById(UUID id) {

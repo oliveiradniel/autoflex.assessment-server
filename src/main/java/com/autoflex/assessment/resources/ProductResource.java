@@ -36,6 +36,12 @@ public class ProductResource {
         return Response.ok(productService.findById(param.id)).build();
     }
 
+    @GET
+    @Path("/summary")
+    public Response summary() {
+        return Response.ok(productService.getSummary()).build();
+    }
+
     @Context
     UriInfo uriInfo;
     @POST
@@ -46,6 +52,12 @@ public class ProductResource {
         var uri = uriInfo.getAbsolutePathBuilder().path(createdProduct.id.toString()).build();
 
         return Response.created(uri).entity(createdProduct).build();
+    }
+
+    @GET
+    @Path("/calculate-production")
+    public Response calculateProduction() {
+        return Response.ok().build();
     }
 
     @PATCH
