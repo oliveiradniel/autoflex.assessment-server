@@ -63,6 +63,10 @@ public class ProductService {
             for (ProductCreateRequest.RawMaterialQuantity material : product.getMaterials()) {
                 RawMaterialEntity rawMaterial = rawMaterialService.findEntityById(material.getRawMaterialId());
 
+                if (rawMaterial == null) {
+                    throw new RawMaterialNotFoundException();
+                }
+
                 createdProduct.addRawMaterial(rawMaterial, material.getQuantityNeeded());
             }
         }
@@ -87,7 +91,7 @@ public class ProductService {
         List<ProductResponse> products = list();
 
         products.sort(
-                Comparator.comparing(ProductResponse::getId).reversed()
+                Comparator.comparing(ProductResponse::getPrice).reversed()
         );
 
         List<ProductionReportResponse> productionReport = new ArrayList<>();
@@ -163,7 +167,7 @@ public class ProductService {
             productReport.setProductName(product.getName());
             productReport.setProductCode(product.getCode());
             productReport.setProduceQuantity(maxProducible.intValue());
-            productReport.setTotalValue(product.getPrice().multiply(maxProducible).intValue());
+            productReport.setTotalValue(product.getPrice().multiply(maxProducible));
             productReport.setRawMaterials(rawMaterialInfos);
 
             productionReport.add(productReport);
@@ -224,7 +228,7 @@ public class ProductService {
 
     public void delete(UUID id) {
 
-        ProductResponse product = findById(id);
+        findById(id);
 
         ProductEntity.deleteById(id);
     }
@@ -242,7 +246,7 @@ public class ProductService {
     private void validateBasicFields(ProductUpdateRequest product, ProductEntity existingProduct) {
 
         if (product.getCode() != null && product.getCode().length() > 20) {
-            throw new BusinessException("Code must be at most 20 characters.", 422);
+            throw new ExceedsCodeLengthException();
         }
 
         if (product.getCode() != null && !product.getCode().equals(existingProduct.getCode())
@@ -257,11 +261,11 @@ public class ProductService {
 
         if (product.getPrice() != null
                 && product.getPrice().compareTo(new BigDecimal("0.01")) < 0) {
-            throw new BusinessException("Price must be at least 0.01", 422);
+            throw new MinimumPriceException();
         }
 
         if (product.getDescription() != null && product.getDescription().length() > 500) {
-            throw new BusinessException("Description must be at most 500 characters.", 422);
+            throw new ExceedsDescriptionLengthException();
         }
     }
 }

@@ -1,9 +1,7 @@
 package com.autoflex.assessment.entities;
 
 import com.autoflex.assessment.dtos.product.response.ProductSummaryResponse;
-import com.autoflex.assessment.exceptions.BusinessException;
-import com.autoflex.assessment.exceptions.ProductMaterialNotFoundException;
-import com.autoflex.assessment.exceptions.RawMaterialIdEmptyException;
+import com.autoflex.assessment.exceptions.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
@@ -111,7 +109,7 @@ public class ProductEntity extends PanacheEntityBase {
         }
 
         if (quantityNeeded == null || quantityNeeded.compareTo(MIN_QUANTITY) < 0) {
-            throw new BusinessException("Quantity needed must be at least 0.01", 422);
+            throw new MinimumQuantityNeededException();
         }
 
         boolean alreadyExists = materials.stream()
@@ -119,10 +117,7 @@ public class ProductEntity extends PanacheEntityBase {
                         && productMaterial.getRawMaterial().getId().equals(rawMaterial.getId()));
 
         if (alreadyExists) {
-            throw new BusinessException(
-                    "This raw material is already part of the composition of this product.",
-                    422
-            );
+            throw new RawMaterialAlreadyExistsException();
         }
 
         ProductMaterialEntity productMaterial = new ProductMaterialEntity();
@@ -141,7 +136,7 @@ public class ProductEntity extends PanacheEntityBase {
         }
 
         if (quantity == null || quantity.compareTo(MIN_QUANTITY) < 0) {
-            throw new BusinessException("Quantity needed must be at least 0.01", 422);
+            throw new MinimumQuantityNeededException();
         }
 
         ProductMaterialEntity found = materials.stream()

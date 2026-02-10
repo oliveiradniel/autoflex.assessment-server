@@ -5,7 +5,6 @@ import com.autoflex.assessment.dtos.raw_material.request.RawMaterialCreateReques
 import com.autoflex.assessment.dtos.raw_material.request.RawMaterialUpdateRequest;
 import com.autoflex.assessment.dtos.raw_material.response.RawMaterialResponse;
 import com.autoflex.assessment.entities.RawMaterialEntity;
-import com.autoflex.assessment.enums.UnitType;
 import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -61,11 +60,11 @@ public class RawMaterialService {
         RawMaterialEntity entity = findEntityById(id);
 
         if (rawMaterial.getCode() != null && rawMaterial.getCode().length() > 20) {
-            throw new BusinessException("Code must be at most 20 characters.", 422);
+            throw new ExceedsCodeLengthException();
         }
 
         if (rawMaterial.getStockQuantity() == null || rawMaterial.getStockQuantity().compareTo(MIN_QUANTITY) < 0) {
-            throw new BusinessException("Stock quantity needed must be at least 0.01", 422);
+            throw new MinimumStockQuantityException();
         }
 
         if (rawMaterial.getCode() != null && !rawMaterial.getCode().equals(entity.getCode())) {

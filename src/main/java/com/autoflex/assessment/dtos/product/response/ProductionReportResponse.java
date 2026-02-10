@@ -16,7 +16,7 @@ public class ProductionReportResponse {
 
     private Integer produceQuantity;
 
-    private Integer totalValue;
+    private BigDecimal totalValue;
 
     private List<RawMaterial> rawMaterials;
 
@@ -32,8 +32,8 @@ public class ProductionReportResponse {
     public Integer getProduceQuantity() { return produceQuantity; }
     public void setProduceQuantity(Integer produceQuantity) { this.produceQuantity = produceQuantity; }
 
-    public Integer getTotalValue() { return totalValue; }
-    public void setTotalValue(Integer totalValue) { this.totalValue = totalValue; }
+    public BigDecimal getTotalValue() { return totalValue; }
+    public void setTotalValue(BigDecimal totalValue) { this.totalValue = totalValue; }
 
     public List<RawMaterial> getRawMaterials() { return rawMaterials; }
     public void setRawMaterials(List<RawMaterial> rawMaterials) { this.rawMaterials = rawMaterials; }
