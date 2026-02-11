@@ -1,78 +1,173 @@
-# stock-management-system
+# 🏭 Autoflex API – Controle de Produção Industrial
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+> API REST desenvolvida em Java com Quarkus para controle de estoque e planejamento de produção industrial. O sistema gerencia o relacionamento entre produtos e suas matérias-primas, calculando a viabilidade de fabricação com base nas matérias primas disponíveis.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+![Status](https://img.shields.io/badge/status-estável-2ECC71?style=flat-square)
 
-## Running the application in dev mode
+---
 
-You can run your application in dev mode that enables live coding using:
+O que ele faz:
 
-```shell script
-./mvnw quarkus:dev
+- CRUD completo de produtos, matérias-primas e a associação entre eles.
+- Endpoint que calcula quanto de cada produto pode ser fabricado com o estoque atual, priorizando os itens de maior valor unitário
+- Impede a exclusão de matérias-primas que estejam vinculadas a algum produto, evitando erros de chave estrangeira
+- Utiliza Hibernate com o padrão Panache (Active Record) para manipulação de dados
+- Cobertura de testes unitários com JUnit, Mockito e Panache Mock focados nas regras de negócio e validações de dados
+
+---
+
+## 🏗️ Escolha do Framework Quarkus (Java)
+
+Embora meu ponto forte seja no ecossistema **JavaScript** e no back-end eu seja focado em **Node.js** utilizando **NestJS**, como o teste sugeria utilizar **Java** com **Quarkus** mesmo sem nunca programar em Java resolvi me desafiar e aprender seus principais conceitos para aplicar a resolução do teste imposto. Confesso que com Java tive dificuldades por conta de sua sintaxe, mas gosto de aprender, **conheço bem POO e tipagem por conta do TypeScript que também aplico fortemente**, mas não tive dificuldades com Quarkus por suas **"annotations"** serem semelhantes aos **decorators** utilizados no NestJS, os testes serem semelhantes ao **Vitest** e seus conceitos que estou acostumado a usar para **testes unitários e de integração** e finalmente sua **arquitetura modular e conceitos de resourcers (controllers), services e repositories (Active Record)**.
+
+---
+
+## 🛞 Instruções para rodar o projeto
+
+#### Pré-requisitos
+
+- JDK 17 instalado
+- Framework: Quarkus **3.31.2**
+- Build Tool: Maven **3.9.12**
+
+1. Clone o repositório e acesse o diretório do projeto:
+
+```bash
+git clone https://github.com/oliveiradniel/autoflex.assessment-server.git
+
+cd autoflex.assessment-server
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+2. Copiar as variáveis:
 
-## Packaging and running the application
+Antes de rodar a aplicação certifique-se de copiar o arquivo `.env.example`para `.env` pois o Docker Compose irá procurar especificamente neste arquivo.
 
-The application can be packaged using:
+```bash
+cp .env.example .env
+```
 
-```shell script
+3. Iniciar o banco de dados. Aqui especifique onde o arquivo .env que contém as variáveis de ambiente e o docker-compose se localizam. No root da aplicação execute:
+
+```bash
+docker compose --env-file .env -f src/main/docker/docker-compose.yml up -d
+```
+
+Isso irá iniciar o banco de dados com PostgreSQL dentro de um container no Docker.
+
+⚠️ Se estiver com uma versão antiga do Docker precisará executar `docker-compose --env-file .env -f src/main/docker/docker-compose.yml up -d`.
+
+4. Executando em modo de desenvolvimento:
+
+```bash
+./mvnw compile quarkus:dev
+
+# Se tiver a linha de comando do Quarkus instalado na sua máquina basta executar:
+
+quarkus dev
+```
+
+5. Gerando o pacote (build). Para criar o arquivo `.jar` executável:
+
+```bash
 ./mvnw package
+
+# Se tiver o Quarkus instalado na sua máquina terá que executar:
+
+quarkus build
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+---
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+## ❤️ RF004 - O coração do Sistema
 
-If you want to build an _über-jar_, execute the following command:
+Seguindo o requisito funcional RF004, adicionei uma rota e funcionalidade para cálculo dos produtos que podem ser produzidos com as matérias primas disponíveis em estoque. Abaixo explico um pouco melhor.
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+- Priorização: Assim como no requisito é feito primeiramente a priorização de produtos que tenham o maior valor unitário.
+- Limitador de gargalo: Para calcular a quantidade de produções viáveis é feito a divisão e comparação para pegar o menor valor produzível, é definido então um valor de referência inicial para que qualquer quantidade real de material que tenha seja menor que ele na primeira comparação.
+- Precisão: É utilizado o tipo `BigDecimal`para um cálculo preciso e sem erros de produtos que não podem ser produzidos acima da capacidade física real do estoque.
+
+---
+
+## 🎲 Seeds (Dados Prontos)
+
+Para uma melhor visualização no front-end quando a aplicação é iniciada coloquei alguns dados prontos na tabela de produtos, matérias-primas e associei algumas matérias-primas aos produtos. Caso queira uma aplicação limpa e sem dados basta ir até: `src/main/resources/application.properties` e mudar a propriedade:
+
+```bash
+quarkus.hibernate-orm.sql-load-script=import.sql
+
+# para
+
+quarkus.hibernate-orm.sql-load-script=no-file
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+---
 
-## Creating a native executable
+## 🧩 Modelagem de Dados
 
-You can create a native executable using:
+O sistema utiliza um relacionamento N:N entre Product e RawMaterial, gerenciado pela entidade ProductMaterial. Esta tabela associativa não apenas vincula os registros, mas também armazena a quantityNeeded, permitindo a definição precisa da ficha técnica de cada item produzido.
 
-```shell script
-./mvnw package -Dnative
+![Modelagem de Dados](https://raw.githubusercontent.com/oliveiradniel/autoflex.assessment-server/refs/heads/main/src/main/assets/screenshot_of_data_modeling.png)
+
+---
+
+## 🧪 Testes
+
+Fiz testes unitários dos serviços da aplicação cobrindo os principais fluxos de sucessos e erros. Foi feito uma separação com `@Nested` entre as operações de leitura e operações que mexem no banco de dados.
+
+Foram feitos **37 testes unitários** e para executá-los basta executar:
+
+```bash
+./mvnw test
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Se optar por executar com Quarkus deverá executar:
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+```bash
+quarkus test
 ```
 
-You can then execute your native executable with: `./target/stock-management-system-1.0.0-SNAPSHOT-runner`
+O Quarkus em específico trava o terminal e entra no modo **Continuous Testing Mode**, ele irá ficar ouvindo seus arquivo e roda os testes sempre que você salva.
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+---
 
-## Related Guides
+## 🚀 Tecnologias utilizadas
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
+| Tecnologia      | Finalidade                                                                  |
+| --------------- | --------------------------------------------------------------------------- |
+| Quarkus REST (Jackson)            | Implementação de APIs REST com serialização JSON de alta performance. |
+| Quarkus Hibernate Panache           | Abstração do Hibernate (Active Record) para operações de banco de dados simplificadas.            |
+| Quarkus JDBC PostgreSQL      | Driver de conexão otimizado para persistência em ambiente de produção.           |
+| Quarkus JDBC H2     | Banco de dados em memória utilizado para agilizar a execução dos testes automatizados.                  |
+| Quarkus Hibernate Validator         | Validação de beans (Bean Validation) baseada em anotações para garantir dados íntegros.            |
+| Quarkus JUnit 5             | Framework para execução de testes unitários e de integração no ecossistema Quarkus.                           |
+| Mockito Core | Criação de objetos simulados (mocks) para isolamento de lógica nos testes.              |
+| Quarkus Panache Mock | Ferramenta específica para mockar entidades e repositórios Panache em testes.                        |
+| Docker  | Orquestração do ambiente de banco de dados (PostgreSQL) via containers para paridade entre ambientes.
 
-## Provided Code
+---
 
-### Hibernate ORM
+## 📄 Variáveis de Ambiente (Docker Compose)
 
-Create your first JPA entity
+O projeto utiliza um arquivo `.env` com as seguintes variáveis:
 
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
+| Nome | Descrição | Exemplo |
+|------|------------|----------|
+| `POSTGRES_DB` | Nome do banco de dados que será criado e usado pela aplicação | `autoflex` |
+| `POSTGRES_USER` | Nome do usuário do banco de dados PostgreSQL | `autoflex_user` |
+| `POSTGRES_PASSWORD` | Senha do usuário do banco de dados PostgreSQL | `autoflex_pass` |
+| `POSTGRES_PORT` | Porta de conexão com o PostgreSQL | `5432` |
+| `QUARKUS_HTTP_CORS_ORIGIN` | URL base do frontend usada no CORS | `http://localhost:5173` |
 
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
+---
 
+## 🔗 Tudo pronto?
 
-### REST
+### Ferramenta de Desenvolvimento
 
-Easily start your REST Web Services
+Este projeto utiliza as facilidades do **Quarkus Dev Mode**. Ao rodar a aplicação em modo de desenvolvimento, você pode acessar a **Dev UI** em: `http://localhost:8080/q/dev`.
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+Lá é possível visualizar a saúde da aplicação, documentação de endpoints, queries executadas para o banco de dados e gerenciar beans de forma interativa.
+
+Clique no badge abaixo e veja como iniciar a aplicação web.
+
+[![Repositório front-end](https://img.shields.io/badge/Repositório_Front_End-00A6F4?style=for-the-badge&logoColor=white)](https://github.com/oliveiradniel/autoflex.assessment-web)
