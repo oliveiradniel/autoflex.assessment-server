@@ -43,8 +43,16 @@ cd autoflex.assessment-server
 
 Antes de rodar a aplicação certifique-se de copiar o arquivo `.env.example`para `.env` pois o Docker Compose irá procurar especificamente neste arquivo.
 
+Linux/macOS
+
 ```bash
 cp .env.example .env
+```
+
+Se estiver no Windows (PowerShell)
+
+```bash
+copy .env.example .env
 ```
 
 3. Iniciar o banco de dados. Aqui especifique onde o arquivo .env que contém as variáveis de ambiente e o docker-compose se localizam. No root da aplicação execute:
