@@ -1,9 +1,11 @@
 package com.autoflex.assessment.services;
 
 import com.autoflex.assessment.dtos.mappers.RawMaterialMapper;
+import com.autoflex.assessment.dtos.product.response.ProductionReportResponse;
 import com.autoflex.assessment.dtos.raw_material.request.RawMaterialCreateRequest;
 import com.autoflex.assessment.dtos.raw_material.request.RawMaterialUpdateRequest;
 import com.autoflex.assessment.dtos.raw_material.response.RawMaterialResponse;
+import com.autoflex.assessment.entities.ProductMaterialEntity;
 import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.exceptions.*;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -89,8 +91,13 @@ public class RawMaterialService {
     }
 
     public void delete(UUID id) {
-
         findById(id);
+
+        long count = ProductMaterialEntity.count("rawMaterial.id", id);
+
+        if (count > 0) {
+            throw new RawMaterialInUseException();
+        }
 
         RawMaterialEntity.deleteById(id);
     }
