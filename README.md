@@ -29,6 +29,7 @@ Embora meu ponto forte seja no ecossistema **JavaScript** e no back-end eu seja 
 - JDK 17 instalado
 - Framework: Quarkus **3.31.2**
 - Build Tool: Maven **3.9.12**
+- Docker & Docker Compose instalados e em execução
 
 1. Clone o repositório e acesse o diretório do projeto:
 
@@ -56,6 +57,14 @@ Isso irá iniciar o banco de dados com PostgreSQL dentro de um container no Dock
 
 ⚠️ Se estiver com uma versão antiga do Docker precisará executar `docker-compose --env-file .env -f src/main/docker/docker-compose.yml up -d`.
 
+3.1. Baixar dependências (Opcional):
+
+Caso queira garantir que todas as bibliotecas do Maven foram baixadas antes de executar.
+
+```bash
+./mvnw dependency:go-offline
+```
+
 4. Executando em modo de desenvolvimento:
 
 ```bash
@@ -64,16 +73,6 @@ Isso irá iniciar o banco de dados com PostgreSQL dentro de um container no Dock
 # Se tiver a linha de comando do Quarkus instalado na sua máquina basta executar:
 
 quarkus dev
-```
-
-5. Gerando o pacote (build). Para criar o arquivo `.jar` executável:
-
-```bash
-./mvnw package
-
-# Se tiver o Quarkus instalado na sua máquina terá que executar:
-
-quarkus build
 ```
 
 ---
