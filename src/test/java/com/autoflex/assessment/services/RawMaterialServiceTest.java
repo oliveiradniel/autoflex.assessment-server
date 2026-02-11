@@ -3,6 +3,7 @@ package com.autoflex.assessment.services;
 import com.autoflex.assessment.dtos.raw_material.request.RawMaterialCreateRequest;
 import com.autoflex.assessment.dtos.raw_material.request.RawMaterialUpdateRequest;
 import com.autoflex.assessment.dtos.raw_material.response.RawMaterialResponse;
+import com.autoflex.assessment.entities.ProductMaterialEntity;
 import com.autoflex.assessment.entities.RawMaterialEntity;
 import com.autoflex.assessment.enums.UnitType;
 import com.autoflex.assessment.exceptions.*;
@@ -274,6 +275,7 @@ public class RawMaterialServiceTest {
             @BeforeEach
             void setup() {
                 PanacheMock.mock(RawMaterialEntity.class);
+                PanacheMock.mock(ProductMaterialEntity.class);
             }
 
             @Test
@@ -282,6 +284,7 @@ public class RawMaterialServiceTest {
                 existingRawMaterial.setId(rawMaterialId);
 
                 Mockito.when(RawMaterialEntity.findByIdOptional(rawMaterialId)).thenReturn(Optional.of(existingRawMaterial));
+                Mockito.when(ProductMaterialEntity.count("rawMaterial.id", rawMaterialId)).thenReturn(0L);
                 Mockito.when(RawMaterialEntity.deleteById(rawMaterialId)).thenReturn(true);
 
                 rawMaterialService.delete(rawMaterialId);
@@ -290,10 +293,22 @@ public class RawMaterialServiceTest {
             }
 
             @Test
-            void shouldThrowExceptionWhenDeletingNonExistent() {
+            void shouldThrowExceptionWhenRawMaterialNotFound() {
                 Mockito.when(RawMaterialEntity.findByIdOptional(rawMaterialId)).thenReturn(Optional.empty());
+                Mockito.when(ProductMaterialEntity.count("rawMaterial.id", rawMaterialId)).thenReturn(0L);
 
                 assertThrows(RawMaterialNotFoundException.class, () -> rawMaterialService.delete(rawMaterialId));
+            }
+
+            @Test
+            void shouldThrowExceptionWhenRawMaterialAlreadyInUse() {
+                RawMaterialEntity existingRawMaterial = new RawMaterialEntity();
+                existingRawMaterial.setId(rawMaterialId);
+
+                Mockito.when(RawMaterialEntity.findByIdOptional(rawMaterialId)).thenReturn(Optional.of(existingRawMaterial));
+                Mockito.when(ProductMaterialEntity.count("rawMaterial.id", rawMaterialId)).thenReturn(1L);
+
+                assertThrows(RawMaterialInUseException.class, () -> rawMaterialService.delete(rawMaterialId));
             }
         }
     }
