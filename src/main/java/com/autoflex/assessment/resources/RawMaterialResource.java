@@ -34,6 +34,12 @@ public class RawMaterialResource {
         return Response.ok(rawMaterialService.findById(param.getId())).build();
     }
 
+    @GET
+    @Path("/in-use")
+    public Response findInUseIds() {
+        return Response.ok(rawMaterialService.findInUseIds()).build();
+    }
+
     @Context
     UriInfo uriInfo;
     @POST

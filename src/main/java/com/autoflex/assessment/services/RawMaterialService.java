@@ -35,6 +35,14 @@ public class RawMaterialService {
         return RawMaterialMapper.toResponse(entity);
     }
 
+    public List<UUID> findInUseIds() {
+        return ProductMaterialEntity.listAll()
+                .stream()
+                .map(pm -> ((ProductMaterialEntity) pm).getRawMaterial().getId())
+                .distinct()
+                .toList();
+    }
+
     public RawMaterialResponse create(RawMaterialCreateRequest rawMaterial) {
 
         if (RawMaterialEntity.existsByCode(rawMaterial.getCode())) {
