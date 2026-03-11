@@ -1,4 +1,4 @@
-# 🏭 Autoflex API – Controle de Produção Industrial
+# 🏭 ForgePlan API – Controle de Produção Industrial
 
 > API REST desenvolvida em Java com Quarkus para controle de estoque e planejamento de produção industrial. O sistema gerencia o relacionamento entre produtos e suas matérias-primas, calculando a viabilidade de fabricação com base nas matérias primas disponíveis.
 
@@ -34,9 +34,9 @@ Embora meu ponto forte seja no ecossistema **JavaScript** e no back-end eu seja 
 1. Clone o repositório e acesse o diretório do projeto:
 
 ```bash
-git clone https://github.com/oliveiradniel/autoflex.assessment-server.git
+git clone https://github.com/oliveiradniel/forgeplan-server.git
 
-cd autoflex.assessment-server
+cd forgeplan-server
 ```
 
 2. Copiar as variáveis:
@@ -113,7 +113,7 @@ quarkus.hibernate-orm.sql-load-script=no-file
 
 O sistema utiliza um relacionamento N:N entre Product e RawMaterial, gerenciado pela entidade ProductMaterial. Esta tabela associativa não apenas vincula os registros, mas também armazena a quantityNeeded, permitindo a definição precisa da ficha técnica de cada item produzido.
 
-![Modelagem de Dados](https://raw.githubusercontent.com/oliveiradniel/autoflex.assessment-server/refs/heads/main/src/main/assets/screenshot_of_data_modeling.png)
+![Modelagem de Dados](https://raw.githubusercontent.com/oliveiradniel/forgeplan-server/refs/heads/main/src/main/assets/screenshot_of_data_modeling.png)
 
 ---
 
@@ -159,9 +159,9 @@ O projeto utiliza um arquivo `.env` com as seguintes variáveis:
 
 | Nome | Descrição | Exemplo |
 |------|------------|----------|
-| `POSTGRES_DB` | Nome do banco de dados que será criado e usado pela aplicação | `autoflex` |
-| `POSTGRES_USER` | Nome do usuário do banco de dados PostgreSQL | `autoflex_user` |
-| `POSTGRES_PASSWORD` | Senha do usuário do banco de dados PostgreSQL | `autoflex_pass` |
+| `POSTGRES_DB` | Nome do banco de dados que será criado e usado pela aplicação | `forgeplan` |
+| `POSTGRES_USER` | Nome do usuário do banco de dados PostgreSQL | `forgeplan_user` |
+| `POSTGRES_PASSWORD` | Senha do usuário do banco de dados PostgreSQL | `forgeplan_pass` |
 | `POSTGRES_PORT` | Porta de conexão com o PostgreSQL | `5432` |
 | `QUARKUS_HTTP_CORS_ORIGIN` | URL base do frontend usada no CORS | `http://localhost:5173` |
 
@@ -177,4 +177,4 @@ Lá é possível visualizar a saúde da aplicação, documentação de endpoints
 
 Clique no badge abaixo e veja como iniciar a aplicação web.
 
-[![Repositório front-end](https://img.shields.io/badge/Repositório_Front_End-00A6F4?style=for-the-badge&logoColor=white)](https://github.com/oliveiradniel/autoflex.assessment-web)
+[![Repositório front-end](https://img.shields.io/badge/Repositório_Front_End-00A6F4?style=for-the-badge&logoColor=white)](https://github.com/oliveiradniel/forgeplan-web)
